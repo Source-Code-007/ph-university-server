@@ -11,7 +11,7 @@ app.use(cors())
 app.use(express.json())
 
 // Router
-app.use('/api/v1/student', studentRouter)
-app.use('/api/v1/user', userRoute)
+app.use('/api/v1/students', studentRouter)
+app.use('/api/v1/users', userRoute)
 
 export default app

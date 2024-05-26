@@ -8,10 +8,12 @@ import {
   updateUserByIdService,
   statusToggleUserService,
 } from './user.service'
+import userZodSchema from './user.validate'
 
 const insertUserController = async (req: Request, res: Response) => {
-  try {
-    const user = await insertUserToDbService(req.body)
+    try {
+      const validateZodUser = userZodSchema.parse(req.body)
+    const user = await insertUserToDbService(validateZodUser)
     res.status(200).send({
       success: true,
       message: 'User inserted successfully!',

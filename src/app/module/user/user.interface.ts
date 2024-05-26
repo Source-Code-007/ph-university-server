@@ -1,10 +1,9 @@
 type TUser = {
-    _id: string,
     id: string,
     password: string,
     needsPasswordChange: Boolean,
     role: 'Admin' | 'Faculty' | 'Student',
-    status: string,
+    status: 'active' | 'inactive',
     isDeleted: boolean,
 }
 

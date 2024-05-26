@@ -7,18 +7,18 @@ const insertUserToDbService = async (userData: TUser) => {
 };
 
 const getAllUserService = async () => {
-    const users = await User.find({}).select('-_id');
+    const users = await User.find({}).select('-__v');
     return users;
 };
 
 const getSingleUserByIdService = async (id: string) => {
-    const user = await User.findById(id).select('-_id');
+    const user = await User.findById(id).select('-__v');
     return user;
 
 };
 
 const deleteUserByIdService = async (id: string) => {
-    const user = await User.findByIdAndDelete(id).select('-_id');
+    const user = await User.findByIdAndDelete(id).select('-__v');
     return user;
 };
 
