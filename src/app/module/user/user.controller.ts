@@ -1,4 +1,4 @@
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import {
   insertUserToDbService,
   getAllUserService,
@@ -9,136 +9,134 @@ import {
   statusToggleUserService,
 } from './user.service'
 import userZodSchema from './user.validate'
+import sendResponse from '../../utils/sendResponse'
+import { StatusCodes } from 'http-status-codes'
 
-const insertUserController = async (req: Request, res: Response) => {
-    try {
-      const validateZodUser = userZodSchema.parse(req.body)
+const insertUserController = async (req: Request, res: Response, next:NextFunction) => {
+  try {
+    const validateZodUser = userZodSchema.parse(req.body)
     const user = await insertUserToDbService(validateZodUser)
-    res.status(200).send({
+    sendResponse(res, StatusCodes.OK, {
       success: true,
       message: 'User inserted successfully!',
       data: user,
     })
   } catch (error: any) {
-    res.status(500).send({
-      success: false,
-      message: error.message || 'Error inserting user',
-      error: error,
-    })
+    next(error)
   }
 }
 
-const getAllUsersController = async (req: Request, res: Response) => {
+const getAllUsersController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const users = await getAllUserService()
-    res.status(200).send({
+    sendResponse(res, StatusCodes.OK, {
       success: true,
       message: 'Users are retrieved successfully!',
       data: users,
     })
   } catch (error: any) {
-    res.status(500).send({
-      success: false,
-      message: error.message ||  'Error fetching all users',
-      error: error,
-    })
+    next(error)
   }
 }
 
-const getUserByIdController = async (req: Request, res: Response) => {
+const getUserByIdController = async (req: Request, res: Response, next:NextFunction) => {
   try {
     const user = await getSingleUserByIdService(req.params?.id)
-    if (!user) {
-      res.status(404).send({success:false, message: 'User not found', data:user })
+    if (!user) {      
+      sendResponse(res, StatusCodes.NOT_FOUND, {
+        success: false,
+        message: 'User not found!',
+        data: user,
+      })
       return
     }
-    res.status(200).send({
+    sendResponse(res, StatusCodes.OK, {
       success: true,
       message: 'User is retrieved successfully!',
       data: user,
     })
   } catch (error: any) {
-    res.status(500).send({
-      success: false,
-      message: error.message || 'Error fetching user by ID',
-      error: error,
-    })
+    next(error)
   }
 }
 
-const deleteUserByIdController = async (req: Request, res: Response) => {
+const deleteUserByIdController = async (req: Request, res: Response, next:NextFunction) => {
   try {
     const user = await deleteUserByIdService(req.params.id)
     if (!user) {
-      res.status(404).send({success:false, message: 'User not found', data:user })
+      sendResponse(res, StatusCodes.NOT_FOUND, {
+        success: false,
+        message: 'User not found!',
+        data: user,
+      })
       return
     }
-    res.status(200).send({
+    sendResponse(res, StatusCodes.OK, {
       success: true,
       message: 'User is deleted successfully!',
       data: user,
     })
   } catch (error: any) {
-    res.status(500).send({
-      success: false,
-      message: error.message || 'Error deleting user by ID',
-      error: error,
-    })
+    next(error)
   }
 }
 
-const deleteAllUsersController = async (req: Request, res: Response) => {
+const deleteAllUsersController = async (req: Request, res: Response, next:NextFunction) => {
   try {
     const user = await deleteAllUserService()
-    res.status(200).send({
+    sendResponse(res, StatusCodes.OK, {
       success: true,
       message: 'Users are deleted successfully!',
       data: user,
     })
   } catch (error: any) {
-    res.status(500).send({
-      success: false,
-      message: error.message || 'Error deleting all users',
-      error: error,
-    })
+    next(error)
   }
 }
 
-const updateUserByIdController = async (req: Request, res: Response) => {
+const updateUserByIdController = async (req: Request, res: Response, next:NextFunction) => {
   try {
     const user = await updateUserByIdService(req.params?.id, req.body)
     if (!user) {
-        res.status(404).send({success:false, message: 'User not found', data:user })
+      sendResponse(res, StatusCodes.NOT_FOUND, {
+        success: false,
+        message: 'User not found!',
+        data: user,
+      })
       return
     }
-    res.status(200).send({ success: true, message: '', data: user })
-  } catch (error: any) {
-    res.status(500).send({
-      success: false,
-      message: error.message || 'Error updating user by ID',
-      error: error,
+    sendResponse(res, StatusCodes.OK, {
+      success: true,
+      message: 'User is updated successfully!',
+      data: user,
     })
+  } catch (error: any) {
+    next(error)
   }
 }
 
-const toggleUserStatusController = async (req: Request, res: Response) => {
+const toggleUserStatusController = async (req: Request, res: Response, next:NextFunction) => {
   try {
     const user = await statusToggleUserService(req.params?.id)
     if (!user) {
-        res.status(404).send({success:false, message: 'User not found', data:user })
+      sendResponse(res, StatusCodes.NOT_FOUND, {
+        success: false,
+        message: 'User not found!',
+        data: user,
+      })
       return
     }
-    res.status(200).send({
+    sendResponse(res, StatusCodes.OK, {
       success: true,
       message: `${user?.status === 'active' ? 'User activated successfully!' : 'User deactivated successfully!'}`,
       data: user,
     })
   } catch (error: any) {
-    res.status(500).send({
-      success: false,
-      message: error.message || 'Error toggling user status',
-      error: error,
-    })
+    next(error)
   }
 }
 
