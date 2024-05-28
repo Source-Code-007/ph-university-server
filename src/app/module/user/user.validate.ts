@@ -3,7 +3,7 @@ import { z } from 'zod'
 
 // Custom password validation regex for security criteria
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
-const userZodSchema = z.object({
+const createUserZodSchema = z.object({
     id: z.string({ required_error: 'Id is required' }),
     password: z.string({ required_error: 'Password is required' })
                .min(8, 'Password must be at least 8 characters long')
@@ -14,4 +14,4 @@ const userZodSchema = z.object({
     isDeleted: z.boolean(),
   });
 
-export  {userZodSchema}
+export  {createUserZodSchema}
