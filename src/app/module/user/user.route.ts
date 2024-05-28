@@ -8,10 +8,12 @@ import {
   toggleUserStatusController,
   updateUserByIdController,
 } from './user.controller'
+import zodValidateHandler from '../../middleware/zodValidateHandler'
+import { userZodSchema } from './user.validate'
 
 const router = Router()
 
-router.post('/', insertUserController)
+router.post('/', zodValidateHandler(userZodSchema), insertUserController)
 router.get('/', getAllUsersController)
 router.get('/:id', getUserByIdController)
 router.delete('/', deleteAllUsersController)

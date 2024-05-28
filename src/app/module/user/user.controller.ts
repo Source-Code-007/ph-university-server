@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express'
+import { NextFunction, Request, RequestHandler, Response } from 'express'
 import {
   insertUserToDbService,
   getAllUserService,
@@ -8,23 +8,22 @@ import {
   updateUserByIdService,
   statusToggleUserService,
 } from './user.service'
-import userZodSchema from './user.validate'
 import sendResponse from '../../utils/sendResponse'
 import { StatusCodes } from 'http-status-codes'
+import catchAsync from '../../utils/catchAsync'
 
-const insertUserController = async (req: Request, res: Response, next:NextFunction) => {
-  try {
-    const validateZodUser = userZodSchema.parse(req.body)
-    const user = await insertUserToDbService(validateZodUser)
+
+
+const insertUserController: RequestHandler = catchAsync(
+  async (req, res) => {
+    const user = await insertUserToDbService(req.body)
     sendResponse(res, StatusCodes.OK, {
       success: true,
       message: 'User inserted successfully!',
       data: user,
     })
-  } catch (error: any) {
-    next(error)
-  }
-}
+  },
+)
 
 const getAllUsersController = async (
   req: Request,
@@ -43,10 +42,14 @@ const getAllUsersController = async (
   }
 }
 
-const getUserByIdController = async (req: Request, res: Response, next:NextFunction) => {
+const getUserByIdController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const user = await getSingleUserByIdService(req.params?.id)
-    if (!user) {      
+    if (!user) {
       sendResponse(res, StatusCodes.NOT_FOUND, {
         success: false,
         message: 'User not found!',
@@ -64,7 +67,11 @@ const getUserByIdController = async (req: Request, res: Response, next:NextFunct
   }
 }
 
-const deleteUserByIdController = async (req: Request, res: Response, next:NextFunction) => {
+const deleteUserByIdController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const user = await deleteUserByIdService(req.params.id)
     if (!user) {
@@ -85,7 +92,11 @@ const deleteUserByIdController = async (req: Request, res: Response, next:NextFu
   }
 }
 
-const deleteAllUsersController = async (req: Request, res: Response, next:NextFunction) => {
+const deleteAllUsersController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const user = await deleteAllUserService()
     sendResponse(res, StatusCodes.OK, {
@@ -98,7 +109,11 @@ const deleteAllUsersController = async (req: Request, res: Response, next:NextFu
   }
 }
 
-const updateUserByIdController = async (req: Request, res: Response, next:NextFunction) => {
+const updateUserByIdController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const user = await updateUserByIdService(req.params?.id, req.body)
     if (!user) {
@@ -119,7 +134,11 @@ const updateUserByIdController = async (req: Request, res: Response, next:NextFu
   }
 }
 
-const toggleUserStatusController = async (req: Request, res: Response, next:NextFunction) => {
+const toggleUserStatusController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const user = await statusToggleUserService(req.params?.id)
     if (!user) {

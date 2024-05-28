@@ -1,27 +1,5 @@
 import { z } from 'zod'
 
-// primitive values
-z.string();
-z.number();
-z.bigint();
-z.boolean();
-z.date();
-z.symbol();
-
-// empty types
-z.undefined();
-z.null();
-z.void(); // accepts undefined
-
-type TUser = {
-    _id: string,
-    id: string,
-    password: string,
-    needsPasswordChange: Boolean,
-    role: 'Admin' | 'Faculty' | 'Student',
-    status: boolean,
-    isDeleted: boolean,
-}
 
 // Custom password validation regex for security criteria
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
@@ -36,4 +14,4 @@ const userZodSchema = z.object({
     isDeleted: z.boolean(),
   });
 
-export default userZodSchema
+export  {userZodSchema}
