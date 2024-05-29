@@ -8,7 +8,7 @@ const UserSchema = new Schema<TUser>({
   role: { type: String, enum: ['Admin', 'Faculty', 'Student'] },
   status: { type: String, enum: ['active', 'inactive'], default: 'active' },
   isDeleted: { type: Boolean, default: false } 
-})
+},{timestamps: true})
 
 const User = model<TUser>('user', UserSchema) 
 export default User
