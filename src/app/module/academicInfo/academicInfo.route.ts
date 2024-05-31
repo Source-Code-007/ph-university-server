@@ -1,17 +1,17 @@
 import { Router } from 'express'
 import zodValidateHandler from '../../middleware/zodValidateHandler'
 import { createAcademicInfoZodSchema } from './academicInfo.validate.ts'
+import { deleteAcademicInfoByIdController, deleteAllAcademicInfoController, getAcademicInfoByIdController, getAllAcademicInfoController, insertAcademicInfoController, updateAcademicInfoByIdController } from './academicInfo.controller'
 
 
 
 const router = Router()
 
-router.post('/', zodValidateHandler(createAcademicInfoZodSchema), insertUserController)
-router.get('/', getAllUsersController)
-router.get('/:id', getUserByIdController)
-router.delete('/', deleteAllUsersController)
-router.delete('/:id', deleteUserByIdController)
-router.patch('/:id', updateUserByIdController)
-router.patch('/status/:id', toggleUserStatusController)
+router.post('/', zodValidateHandler(createAcademicInfoZodSchema), insertAcademicInfoController)
+router.get('/', getAllAcademicInfoController)
+router.get('/:id', getAcademicInfoByIdController)
+router.delete('/', deleteAllAcademicInfoController)
+router.delete('/:id', deleteAcademicInfoByIdController)
+router.patch('/:id', updateAcademicInfoByIdController)
 
 export { router as academicInfoRouter }

@@ -8,8 +8,8 @@ const academicInfoSchema = new Schema<TAcademicInfo>({
     batch: {type: Number, required: true},
     admissionYear: {type: Number, required: true},
     admissionDate: {type: Date, required: true},
-    regSLno: {type: Number, required: true},
-    RegCode: {type: String, required: true},
+    regSLno: {type: Number, required: true}, //124217
+    RegCode: {type: String, required: true}, //CSE-109-23-124217
 }, {timestamps: true})
 
 const AcademicInfo = model('AcademicInfo', academicInfoSchema)

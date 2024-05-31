@@ -6,21 +6,20 @@ type TGuardian = {
     age: string,
     email: string | null
 }
+type TBloodGroup = 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-';
 type TStudent = {
     user: Types.ObjectId,
-
     name: string,
     gender: string,
     dateOfBirth: Date,
     email: string,
     phone: string,
-    semester: string,
-    batch: string,
+    nid: string,
     presentAddress: string,
     permanentAddress: string,
-    needsPasswordChange: boolean,
     guardian: TGuardian,
-    academicDepartment: Types.ObjectId,
+    academicInfo: Types.ObjectId,
+    bloodGroup: TBloodGroup
     isDeleted: boolean,
 }
 
