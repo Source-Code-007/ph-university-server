@@ -8,6 +8,7 @@ import { academicFacultyController } from './academicFaculty.controller'
 
 const router = Router()
 
+
 router.post(
   '/',
   zodValidateHandler(createAcademicFacultyZodSchema),
