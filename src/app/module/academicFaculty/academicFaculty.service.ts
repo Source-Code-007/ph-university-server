@@ -1,20 +1,23 @@
-import { TAcademicFaculty } from './academicFaculty.interface'
-import AcademicFaculty from './academicFaculty.model'
+import { TAcademicFaculty } from "./academicFaculty.interface"
+import AcademicFaculty from "./academicFaculty.model"
 
 const insertAcademicFacultyToDb = async (
   academicFacultyData: TAcademicFaculty,
 ) => {
-  const academicFaculty = await AcademicFaculty.create(academicFacultyData)
+  const academicFaculty = await AcademicFaculty.create(
+    academicFacultyData,
+  )
   return academicFaculty
 }
 
-const getAllAcademicFaculty = async () => {
-  const academicFaculty = await AcademicFaculty.find({}).select('-__v')
-  return academicFaculty
+const getAllAcademicFaculties = async () => {
+  const academicFaculties = await AcademicFaculty.find({}).select('-__v')
+  return academicFaculties
 }
 
 const getSingleAcademicFacultyById = async (id: string) => {
-  const academicFaculty = await AcademicFaculty.findById(id).select('-__v')
+  const academicFaculty =
+    await AcademicFaculty.findById(id).select('-__v')
   return academicFaculty
 }
 
@@ -24,9 +27,9 @@ const deleteAcademicFacultyById = async (id: string) => {
   return academicFaculty
 }
 
-const deleteAllAcademicFaculty = async () => {
-  const academicFaculty = await AcademicFaculty.deleteMany({})
-  return academicFaculty
+const deleteAllAcademicFaculties = async () => {
+  const academicFaculties = await AcademicFaculty.deleteMany({})
+  return academicFaculties
 }
 
 const updateAcademicFacultyById = async (
@@ -43,9 +46,9 @@ const updateAcademicFacultyById = async (
 
 export const academicFacultyServices = {
   insertAcademicFacultyToDb,
-  getAllAcademicFaculty,
+  getAllAcademicFaculties,
   getSingleAcademicFacultyById,
   deleteAcademicFacultyById,
-  deleteAllAcademicFaculty,
+  deleteAllAcademicFaculties,
   updateAcademicFacultyById,
 }

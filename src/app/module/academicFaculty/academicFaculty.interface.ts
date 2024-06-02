@@ -1,5 +1,6 @@
+
 type TAcademicFaculty = {
-    name: string
+    name: string,
 }
 
 export {TAcademicFaculty}

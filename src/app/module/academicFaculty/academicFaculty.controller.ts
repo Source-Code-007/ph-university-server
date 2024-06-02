@@ -1,8 +1,8 @@
-import { RequestHandler } from 'express'
-import sendResponse from '../../utils/sendResponse'
-import { StatusCodes } from 'http-status-codes'
-import catchAsync from '../../utils/catchAsync'
-import { academicFacultyServices } from './academicFaculty.service'
+import { RequestHandler } from "express"
+import catchAsync from "../../utils/catchAsync"
+import sendResponse from "../../utils/sendResponse"
+import { academicFacultyServices } from "./academicFaculty.service"
+import { StatusCodes } from "http-status-codes"
 
 
 
@@ -17,12 +17,12 @@ const insertAcademicFaculty: RequestHandler = catchAsync(
   },
 )
 
-const getAllAcademicFaculty = catchAsync(async(req,res)=> {
-    const academicFaculty = await academicFacultyServices.getAllAcademicFaculty()
+const getAllAcademicFaculties = catchAsync(async(req,res)=> {
+    const academicFaculties = await academicFacultyServices.getAllAcademicFaculties()
     sendResponse(res, StatusCodes.OK, {
       success: true,
-      message: 'Academic faculty are retrieved successfully!',
-      data: academicFaculty,
+      message: 'Academic faculties are retrieved successfully!',
+      data: academicFaculties,
     })
 })
 
@@ -43,8 +43,6 @@ const getAcademicFacultyById = catchAsync(async(req,res)=> {
     })
 })
 
-
-
 const deleteAcademicFacultyById = catchAsync(async(req,res)=> {
     const academicFaculty = await academicFacultyServices.deleteAcademicFacultyById(req.params.id)
     if (!academicFaculty) {
@@ -62,13 +60,12 @@ const deleteAcademicFacultyById = catchAsync(async(req,res)=> {
     })
 })
 
-
-const deleteAllAcademicFaculty = catchAsync(async(req,res)=> {
-  const academicFaculty = await academicFacultyServices.deleteAllAcademicFaculty()
+const deleteAllAcademicFaculties = catchAsync(async(req,res)=> {
+  const academicFaculties = await academicFacultyServices.deleteAllAcademicFaculties()
   sendResponse(res, StatusCodes.OK, {
     success: true,
-    message: 'Academic faculty are deleted successfully!',
-    data: academicFaculty,
+    message: 'Academic faculties are deleted successfully!',
+    data: academicFaculties,
   })
 })
 
@@ -92,9 +89,9 @@ const updateAcademicFacultyById = catchAsync(async(req,res)=> {
 
 export const academicFacultyController  = {
     insertAcademicFaculty,
-    getAllAcademicFaculty,
+    getAllAcademicFaculties,
     getAcademicFacultyById,
     deleteAcademicFacultyById,
-    deleteAllAcademicFaculty,
+    deleteAllAcademicFaculties,
     updateAcademicFacultyById,
 }
