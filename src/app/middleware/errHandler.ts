@@ -25,7 +25,6 @@ const globalErrHandler: ErrorRequestHandler = (err, req, res, next) => {
   // Default values
   let statusCode = err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR
   let message = err.message || 'Internal server error'
-
   let errorSources: TErrorSources = [
     {
       path: '',
@@ -68,13 +67,12 @@ const globalErrHandler: ErrorRequestHandler = (err, req, res, next) => {
     errorSources = ourErr.errorSources
   }
 
-  console.log(err)
   // Send response
   res.status(statusCode).send({
     success: false,
     message,
     errorSources,
-    err,
+    // err,
     stack: process.env.NODE_ENV === 'production' ? '🥞' : err?.stack,
   })
 }

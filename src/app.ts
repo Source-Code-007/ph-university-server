@@ -10,6 +10,11 @@ import router from './app/routes'
 
 const app = express()
 
+
+app.get('/test', async(req, res) => {
+  res.send('Test route')
+})
+
 // parser
 app.use(cors())
 app.use(express.json())
