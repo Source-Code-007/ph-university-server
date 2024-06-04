@@ -1,8 +1,8 @@
 import { StatusCodes } from "http-status-codes"
-import { TErrorSources } from "../interface/error"
+import { TErrorSources, TGenericErrorResponse } from "../interface/error"
 import { ZodError, ZodIssue } from "zod"
 
-const handleZodErr = (err:ZodError) => {   
+const handleZodErr = (err:ZodError):TGenericErrorResponse => {   
     const statusCode = StatusCodes.BAD_REQUEST
     const message = "Validation error!"
     const errorSources:TErrorSources = err?.issues?.map((issue:ZodIssue)=> {

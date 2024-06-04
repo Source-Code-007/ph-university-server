@@ -4,4 +4,11 @@
         message: string,
     }[]
 
-    export { TErrorSources }
+    // Type of generic error reponse
+    type TGenericErrorResponse = {
+        statusCode: number,
+        message: string,
+        errorSources: TErrorSources
+    }
+
+    export { TErrorSources, TGenericErrorResponse }

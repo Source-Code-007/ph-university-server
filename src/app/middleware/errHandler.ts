@@ -1,8 +1,14 @@
 import { ErrorRequestHandler, NextFunction, Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
-import { ZodError, ZodIssue } from 'zod'
+import { ZodError } from 'zod'
 import { TErrorSources } from '../interface/error'
-import handleZodErr from '../errors/handleZodError'
+import mongoose from 'mongoose'
+import handleZodErr from '../errors/handleZodErr'
+import {
+  handleMongooseCastErr,
+  handleMongooseDuplicateKeyErr,
+  handleMongooseValidationErr,
+} from '../errors/handleMongooseErr'
 
 const notFoundErrHandler = (
   req: Request,
@@ -15,39 +21,60 @@ const notFoundErrHandler = (
     .send({ success: false, message: error?.message, error: error })
 }
 
-
 const globalErrHandler: ErrorRequestHandler = (err, req, res, next) => {
-
-
   // Default values
   let statusCode = err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR
   let message = err.message || 'Internal server error'
 
-  let errorSources:TErrorSources = [{
-        path: "",
-        message: "Internal server error"
-  }]
+  let errorSources: TErrorSources = [
+    {
+      path: '',
+      message: 'Internal server error',
+    },
+  ]
 
+  //   zod error
+  if (err instanceof ZodError) {
+    const ourErr = handleZodErr(err)
 
-//   Cast error
-  if(err?.name === "CastError"){
-
+    message = ourErr.message
+    statusCode = ourErr.statusCode
+    errorSources = ourErr.errorSources
   }
 
-//   zod error
-if(err instanceof ZodError){
-   const ourErr = handleZodErr(err)
+  // mongoose validation error
+  if (err instanceof mongoose.Error.ValidationError) {
+    const ourErr = handleMongooseValidationErr(err)
 
-   message = ourErr.message
-   statusCode = ourErr.statusCode
-   errorSources = ourErr.errorSources
-}
+    message = ourErr.message
+    statusCode = ourErr.statusCode
+    errorSources = ourErr.errorSources
+  }
+  //   Cast error
+  if (err instanceof mongoose.Error.CastError) {
+    const ourErr = handleMongooseCastErr(err)
 
+    message = ourErr.message
+    statusCode = ourErr.statusCode
+    errorSources = ourErr.errorSources
+  }
+
+  // Duplicate key err
+  if (err?.code === 11000) {
+    const ourErr = handleMongooseDuplicateKeyErr(err)
+
+    message = ourErr.message
+    statusCode = ourErr.statusCode
+    errorSources = ourErr.errorSources
+  }
+
+  console.log(err)
   // Send response
   res.status(statusCode).send({
     success: false,
     message,
     errorSources,
+    err,
     stack: process.env.NODE_ENV === 'production' ? '🥞' : err?.stack,
   })
 }
