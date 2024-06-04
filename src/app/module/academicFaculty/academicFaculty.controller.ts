@@ -3,6 +3,7 @@ import catchAsync from "../../utils/catchAsync"
 import sendResponse from "../../utils/sendResponse"
 import { academicFacultyServices } from "./academicFaculty.service"
 import { StatusCodes } from "http-status-codes"
+import AppError from "../../errors/appError"
 
 
 
@@ -29,12 +30,7 @@ const getAllAcademicFaculties = catchAsync(async(req,res)=> {
 const getAcademicFacultyById = catchAsync(async(req,res)=> {
     const academicFaculty = await academicFacultyServices.getSingleAcademicFacultyById(req.params?.id)
     if (!academicFaculty) {
-      sendResponse(res, StatusCodes.NOT_FOUND, {
-        success: false,
-        message: 'Academic faculty not found!',
-        data: academicFaculty,
-      })
-      return
+      throw  new AppError(StatusCodes.NOT_FOUND, 'Academic faculty not found!')
     }
     sendResponse(res, StatusCodes.OK, {
       success: true,
@@ -46,12 +42,7 @@ const getAcademicFacultyById = catchAsync(async(req,res)=> {
 const deleteAcademicFacultyById = catchAsync(async(req,res)=> {
     const academicFaculty = await academicFacultyServices.deleteAcademicFacultyById(req.params.id)
     if (!academicFaculty) {
-      sendResponse(res, StatusCodes.NOT_FOUND, {
-        success: false,
-        message: 'Academic faculty not found!',
-        data: academicFaculty,
-      })
-      return
+      throw  new AppError(StatusCodes.NOT_FOUND, 'Academic faculty not found!')
     }
     sendResponse(res, StatusCodes.OK, {
       success: true,
@@ -72,12 +63,7 @@ const deleteAllAcademicFaculties = catchAsync(async(req,res)=> {
 const updateAcademicFacultyById = catchAsync(async(req,res)=> {
     const academicFaculty = await academicFacultyServices.updateAcademicFacultyById(req.params?.id, req.body)
     if (!academicFaculty) {
-      sendResponse(res, StatusCodes.NOT_FOUND, {
-        success: false,
-        message: 'Academic faculty not found!',
-        data: academicFaculty,
-      })
-      return
+      throw  new AppError(StatusCodes.NOT_FOUND, 'Academic faculty not found!')
     }
     sendResponse(res, StatusCodes.OK, {
       success: true,

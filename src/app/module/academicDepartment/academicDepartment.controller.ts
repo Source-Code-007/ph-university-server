@@ -3,6 +3,7 @@ import sendResponse from '../../utils/sendResponse'
 import { StatusCodes } from 'http-status-codes'
 import catchAsync from '../../utils/catchAsync'
 import { academicDepartmentServices } from './academicDepartment.service'
+import AppError from '../../errors/appError'
 
 
 const insertAcademicDepartment: RequestHandler = catchAsync(
@@ -28,12 +29,7 @@ const getAllAcademicDepartments = catchAsync(async(req,res)=> {
 const getAcademicDepartmentById = catchAsync(async(req,res)=> {
     const academicDepartment = await academicDepartmentServices.getSingleAcademicDepartmentById(req.params?.id)
     if (!academicDepartment) {
-      sendResponse(res, StatusCodes.NOT_FOUND, {
-        success: false,
-        message: 'Academic department not found!',
-        data: academicDepartment,
-      })
-      return
+      throw  new AppError(StatusCodes.NOT_FOUND, 'Academic department not found!')
     }
     sendResponse(res, StatusCodes.OK, {
       success: true,
@@ -45,12 +41,7 @@ const getAcademicDepartmentById = catchAsync(async(req,res)=> {
 const deleteAcademicDepartmentById = catchAsync(async(req,res)=> {
     const academicDepartment = await academicDepartmentServices.deleteAcademicDepartmentById(req.params.id)
     if (!academicDepartment) {
-      sendResponse(res, StatusCodes.NOT_FOUND, {
-        success: false,
-        message: 'Academic department not found!',
-        data: academicDepartment,
-      })
-      return
+      throw  new AppError(StatusCodes.NOT_FOUND, 'Academic department not found!')
     }
     sendResponse(res, StatusCodes.OK, {
       success: true,
@@ -71,12 +62,7 @@ const deleteAllAcademicDepartments = catchAsync(async(req,res)=> {
 const updateAcademicDepartmentById = catchAsync(async(req,res)=> {
     const academicDepartment = await academicDepartmentServices.updateAcademicDepartmentById(req.params?.id, req.body)
     if (!academicDepartment) {
-      sendResponse(res, StatusCodes.NOT_FOUND, {
-        success: false,
-        message: 'Academic department not found!',
-        data: academicDepartment,
-      })
-      return
+      throw  new AppError(StatusCodes.NOT_FOUND, 'Academic department not found!')
     }
     sendResponse(res, StatusCodes.OK, {
       success: true,

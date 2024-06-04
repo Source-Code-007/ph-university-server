@@ -1,5 +1,7 @@
+import { StatusCodes } from "http-status-codes";
 import { TUser } from "./user.interface";
 import User from "./user.model";
+import AppError from "../../errors/appError";
 
 const insertUserToDbService = async (userData: TUser) => {
     const user = await User.create(userData);
@@ -35,7 +37,7 @@ const updateUserByIdService = async (id: string, updatedUser: Partial<TUser>) =>
 const statusToggleUserService = async (id: string) => {
     const user = await User.findById(id);
     if (!user) {
-      throw new Error('User not found');
+      throw  new AppError(StatusCodes.NOT_FOUND, 'User not found!')
     }
     if(user.status==='active'){
         user.status = 'inactive'

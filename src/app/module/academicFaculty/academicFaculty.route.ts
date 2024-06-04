@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import zodValidateHandler from '../../middleware/zodValidateHandler'
-import { createAcademicFacultyZodSchema, updateAcademicFacultyZodSchema } from './academicFaculty.validate.ts'
 import { academicFacultyController } from './academicFaculty.controller'
+import { createAcademicFacultyZodSchema, updateAcademicFacultyZodSchema } from './academicFaculty.validate'
 
 
 

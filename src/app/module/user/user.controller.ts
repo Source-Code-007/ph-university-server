@@ -11,6 +11,7 @@ import {
 import sendResponse from '../../utils/sendResponse'
 import { StatusCodes } from 'http-status-codes'
 import catchAsync from '../../utils/catchAsync'
+import AppError from '../../errors/appError'
 
 
 
@@ -50,12 +51,7 @@ const getUserByIdController = async (
   try {
     const user = await getSingleUserByIdService(req.params?.id)
     if (!user) {
-      sendResponse(res, StatusCodes.NOT_FOUND, {
-        success: false,
-        message: 'User not found!',
-        data: user,
-      })
-      return
+      throw  new AppError(StatusCodes.NOT_FOUND, 'User not found!')
     }
     sendResponse(res, StatusCodes.OK, {
       success: true,
@@ -75,12 +71,7 @@ const deleteUserByIdController = async (
   try {
     const user = await deleteUserByIdService(req.params.id)
     if (!user) {
-      sendResponse(res, StatusCodes.NOT_FOUND, {
-        success: false,
-        message: 'User not found!',
-        data: user,
-      })
-      return
+      throw  new AppError(StatusCodes.NOT_FOUND, 'User not found!')
     }
     sendResponse(res, StatusCodes.OK, {
       success: true,
@@ -117,12 +108,7 @@ const updateUserByIdController = async (
   try {
     const user = await updateUserByIdService(req.params?.id, req.body)
     if (!user) {
-      sendResponse(res, StatusCodes.NOT_FOUND, {
-        success: false,
-        message: 'User not found!',
-        data: user,
-      })
-      return
+      throw  new AppError(StatusCodes.NOT_FOUND, 'User not found!')
     }
     sendResponse(res, StatusCodes.OK, {
       success: true,
@@ -142,12 +128,7 @@ const toggleUserStatusController = async (
   try {
     const user = await statusToggleUserService(req.params?.id)
     if (!user) {
-      sendResponse(res, StatusCodes.NOT_FOUND, {
-        success: false,
-        message: 'User not found!',
-        data: user,
-      })
-      return
+      throw  new AppError(StatusCodes.NOT_FOUND, 'User not found!')
     }
     sendResponse(res, StatusCodes.OK, {
       success: true,
