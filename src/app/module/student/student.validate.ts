@@ -1,7 +1,13 @@
 import { z } from 'zod'
 
 const createStudentZodSchema = z.object({
-  name: z.string(),
+  id: z.string(),
+  name: z.object({
+    firstName: z.string(),
+    middleName: z.string().optional(),
+    lastName: z.string(),
+  }),
+  profileImg: z.string(),
   gender: z.string(),
   dateOfBirth: z.string(),
   email: z.string(),
@@ -16,8 +22,8 @@ const createStudentZodSchema = z.object({
     email: z.string().optional(),
   }),
   bloodGroup: z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']),
-  user: z.string(),
-  academicInfo: z.string(),
+  academicInfo: z.string(), //FK
+  user: z.string(), //FK
   isDeleted: z.boolean(),
 })
 
