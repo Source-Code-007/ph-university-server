@@ -1,12 +1,12 @@
 import { z } from 'zod'
 
 const createStudentZodSchema = z.object({
-  id: z.string(),
   name: z.object({
     firstName: z.string(),
     middleName: z.string().optional(),
     lastName: z.string(),
   }),
+  
   profileImg: z.string(),
   gender: z.string(),
   dateOfBirth: z.string(),
@@ -22,9 +22,16 @@ const createStudentZodSchema = z.object({
     email: z.string().optional(),
   }),
   bloodGroup: z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']),
-  academicInfo: z.string(), //FK
-  user: z.string(), //FK
-  isDeleted: z.boolean(),
+  academicInfo: z.object({
+    department: z.string(),
+    // roll: z.number().int().max(Number(process.env.MAX_STUDENT_PER_BATCH), 'Roll number exceeds the maximum limit.').min(1, 'Roll number must be greater than 0.'),
+    batch: z.string(),
+    admissionDate: z.string(),
+  }),
 })
 
-export { createStudentZodSchema }
+const updateStudentZodSchema = createStudentZodSchema.deepPartial(); //TODO: make all properties optional if it's not work
+
+
+
+export { createStudentZodSchema, updateStudentZodSchema }

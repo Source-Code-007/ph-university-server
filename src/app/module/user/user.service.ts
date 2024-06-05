@@ -3,28 +3,78 @@ import { TUser } from './user.interface'
 import User from './user.model'
 import AppError from '../../errors/appError'
 import { TStudent } from '../student/student.interface'
-import { startSession } from 'mongoose'
+import mongoose, { startSession } from 'mongoose'
 import { Student } from '../student/student.model'
+import Batch from '../batch/batch.model'
+import AcademicDepartment from '../academicDepartment/academicDepartment.model'
 
-const insertStudentToDb = async (payload: TStudent) => {
+const insertStudentToDb = async (payload: TStudent & TUser) => {
   const userData: Partial<TUser> = {}
-  //   {
-  //     password: payload?.password,
-  //     needsPasswordChange: payload?.needsPasswordChange,
-  //     role: 'Student',
-  //     status: 'active',
-  //     isDeleted: false,
-  //   }
+  const studentData: Partial<TStudent> = { ...payload }
 
-  userData.password = 'password'
-  userData.role = 'Student'
+  // set user data
+  userData.password = payload.password
+  userData.role = 'student'
 
-  const session = await startSession()
+  // set student data
+  studentData.id = payload.academicInfo.regCode
+
+  const session = await mongoose.startSession()
 
   try {
     session.startTransaction()
 
-    const student = await Student.create([payload], { session })
+    const department = await AcademicDepartment.findById(payload.academicInfo.department)
+    const totalStudent = await Student.countDocuments({}).exec()
+    const batch = await Batch.findById(payload.academicInfo?.batch)
+
+
+    // console.log(department, 'department');
+    // console.log(totalStudent, 'totalStudent');
+
+    if(department){
+      // set regSlNo and regCode
+      const regSlNo = totalStudent > 0 ? totalStudent + 1 : 1
+      payload.academicInfo.regSlNo = regSlNo
+      const regCode =`${department.shortName}-${batch?.batch}-${regSlNo}`
+      payload.academicInfo.regCode = regCode
+      studentData.id = regCode
+      userData.id = regCode
+    } else{
+      throw new AppError(StatusCodes.BAD_REQUEST, 'Department not found')  
+    }
+
+
+    if (!batch) {
+      throw new AppError(StatusCodes.BAD_REQUEST, 'Batch not found')
+    }
+    // Check if batch has reached the maximum student limit
+    const maxStudentsPerBatch = Number(process.env.MAX_STUDENT_PER_BATCH) || 45 // Default to 45 if not set
+    if (batch.totalStudent && batch.totalStudent >= maxStudentsPerBatch) {
+      throw new AppError(StatusCodes.BAD_REQUEST, 'Batch is full')
+    }
+
+    // Update roll and totalStudent
+    if (batch.totalStudent !== undefined && studentData.academicInfo) {
+      studentData.academicInfo.roll = batch.totalStudent + 1
+      batch.totalStudent += 1
+      await batch.save({ session })
+    }
+
+
+    // Save user
+    const user = await User.create([userData], { session })
+    if (!user?.length) {
+      throw new AppError(StatusCodes.BAD_REQUEST, 'Failed to insert user to db')
+    }
+
+    studentData.user = user[0]._id
+
+    // console.log(userData, 'userData')
+    // console.log(studentData, 'studentData')
+
+    // Save student
+    const student = await Student.create([studentData], { session })
     if (!student?.length) {
       throw new AppError(
         StatusCodes.BAD_REQUEST,
@@ -32,55 +82,44 @@ const insertStudentToDb = async (payload: TStudent) => {
       )
     }
 
-    const user = await User.create([payload.user], { session })
-    if (!user?.length) {
-      throw new AppError(StatusCodes.BAD_REQUEST, 'Failed to insert user to db')
-    }
-    session.commitTransaction()
-    session.endSession()
+    await session.commitTransaction()
+    await session.endSession()
+    return student[0]
   } catch (err: any) {
-    session.abortTransaction()
-    session.endSession()
+    await session.abortTransaction()
+    await session.endSession()
     throw new Error(err)
   }
 }
 
-const insertUserToDbService = async (userData: TUser) => {
-  const user = await User.create(userData)
-  return user
-}
-
-const getAllUserService = async () => {
+const getAllUser = async () => {
   const users = await User.find({}).select('-__v')
   return users
 }
 
-const getSingleUserByIdService = async (id: string) => {
+const getSingleUserById = async (id: string) => {
   const user = await User.findById(id).select('-__v')
   return user
 }
 
-const deleteUserByIdService = async (id: string) => {
+const deleteUserById = async (id: string) => {
   const user = await User.findByIdAndDelete(id).select('-__v')
   return user
 }
 
-const deleteAllUserService = async () => {
+const deleteAllUser = async () => {
   const users = await User.deleteMany({})
   return users
 }
 
-const updateUserByIdService = async (
-  id: string,
-  updatedUser: Partial<TUser>,
-) => {
+const updateUserById = async (id: string, updatedUser: Partial<TUser>) => {
   const user = await User.findByIdAndUpdate(id, updatedUser, {
     new: true,
   }).select('-__v')
   return user
 }
 
-const statusToggleUserService = async (id: string) => {
+const statusToggleUser = async (id: string) => {
   const user = await User.findById(id)
   if (!user) {
     throw new AppError(StatusCodes.NOT_FOUND, 'User not found!')
@@ -94,12 +133,12 @@ const statusToggleUserService = async (id: string) => {
   return user
 }
 
-export {
-  insertUserToDbService,
-  getAllUserService,
-  getSingleUserByIdService,
-  deleteUserByIdService,
-  deleteAllUserService,
-  updateUserByIdService,
-  statusToggleUserService,
+export const userServices = {
+  insertStudentToDb,
+  getAllUser,
+  getSingleUserById,
+  deleteUserById,
+  deleteAllUser,
+  updateUserById,
+  statusToggleUser,
 }

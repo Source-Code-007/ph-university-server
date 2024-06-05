@@ -1,6 +1,9 @@
-import { Schema, model } from 'mongoose'
-import { TGuardian, TName, TStudent } from './student.interface'
-import { string } from 'zod'
+import { Schema, model, startSession } from 'mongoose'
+import { TAcadmicInfo, TGuardian, TName, TStudent } from './student.interface'
+import Batch from '../batch/batch.model'
+import AppError from '../../errors/appError'
+import { StatusCodes } from 'http-status-codes'
+import AcademicDepartment from '../academicDepartment/academicDepartment.model'
 
 // Define the TGuardian schema
 const GuardianSchema = new Schema<TGuardian>(
@@ -8,7 +11,7 @@ const GuardianSchema = new Schema<TGuardian>(
     name: { type: String, required: true },
     phone: { type: String, required: true },
     age: { type: String, required: true },
-    email: { type: String, required: false, default: null },
+    email: { type: String, default: null },
   },
   { _id: false },
 )
@@ -16,25 +19,44 @@ const GuardianSchema = new Schema<TGuardian>(
 const NameSchema = new Schema<TName>(
   {
     firstName: { type: String, required: true },
-    middleName: { type: String, required: false, default: null },
+    middleName: { type: String, default: null },
     lastName: { type: String, required: true },
+  },
+  { _id: false },
+)
+
+// Academic info schema
+const AcademicInfo = new Schema<TAcadmicInfo>(
+  {
+    department: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: 'AcademicDepartment',
+    },
+    roll: { type: Number, default: 1 },
+    batch: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: 'Batch',
+    },
+    admissionDate: { type: Date, required: true },
+    admissionYear: { type: Number },
+    graduationYear: { type: Number, default: null },
+    regSlNo: { type: Number },
+    regCode: { type: String },
   },
   { _id: false },
 )
 
 // Define the TStudent schema
 const StudentSchema = new Schema<TStudent>({
-  id: { type: String, required: true, unique: true },
+  id: { type: String },
   user: {
     type: Schema.Types.ObjectId,
-    required: true,
+    // required: true,
     ref: 'User',
   },
-  academicInfo: {
-    type: Schema.Types.ObjectId,
-    required: true,
-    ref: 'AcademicInfo',
-  },
+  academicInfo: { type: AcademicInfo, required: true },
   name: { type: NameSchema, required: true },
   profileImg: { type: String, required: true },
   gender: { type: String, required: true },
@@ -52,6 +74,20 @@ const StudentSchema = new Schema<TStudent>({
     required: true,
   },
   isDeleted: { type: Boolean, required: true, default: false },
+})
+
+// Pre hook
+StudentSchema.pre('save', async function (next) {
+  try {
+
+    // Set admissionYear as the year of admissionDate
+    if (this.academicInfo?.admissionDate) {
+      this.academicInfo.admissionYear = this.academicInfo?.admissionDate?.getFullYear()
+    }
+    next()
+  } catch (e:any) {
+    next(e)
+  }
 })
 
 // Create the model
