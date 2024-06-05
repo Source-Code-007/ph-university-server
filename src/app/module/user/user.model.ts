@@ -10,5 +10,5 @@ const UserSchema = new Schema<TUser>({
   isDeleted: { type: Boolean, default: false } 
 },{timestamps: true})
 
-const User = model<TUser>('user', UserSchema) 
+const User = model<TUser>('User', UserSchema) 
 export default User

@@ -1,12 +1,9 @@
-import { Router } from "express";
+import { Router } from 'express'
+import { studentController } from './student.controller'
 
 const router = Router()
 
-router.get('/', (req, res)=> {
-    console.log('This is student homepage');
-    res.status(200).send('This is student homepage')
-})
+router.get('/', studentController.getAllStudent)
+router.get('/:id', studentController.getStudentById)
 
-
-
-export {router as studentRouter}
+export { router as studentRouter }

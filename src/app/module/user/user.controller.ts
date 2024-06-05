@@ -8,7 +8,7 @@ import { userServices } from './user.service'
 
 const insertStudent: RequestHandler = catchAsync(async (req, res) => {
   const student = await userServices.insertStudentToDb(req.body)
-
+  
   sendResponse(res, StatusCodes.OK, {
     success: true,
     message: 'Student inserted successfully!',

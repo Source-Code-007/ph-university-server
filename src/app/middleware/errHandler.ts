@@ -22,6 +22,7 @@ const notFoundErrHandler = (
 }
 
 const globalErrHandler: ErrorRequestHandler = (err, req, res, next) => {
+
   // Default values
   let statusCode = err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR
   let message = err.message || 'Internal server error'
@@ -35,7 +36,6 @@ const globalErrHandler: ErrorRequestHandler = (err, req, res, next) => {
   //   zod error
   if (err instanceof ZodError) {
     const ourErr = handleZodErr(err)
-
     message = ourErr.message
     statusCode = ourErr.statusCode
     errorSources = ourErr.errorSources
@@ -67,12 +67,12 @@ const globalErrHandler: ErrorRequestHandler = (err, req, res, next) => {
     errorSources = ourErr.errorSources
   }
 
+
   // Send response
   res.status(statusCode).send({
     success: false,
     message,
     errorSources,
-    // err,
     stack: process.env.NODE_ENV === 'production' ? '🥞' : err?.stack,
   })
 }
