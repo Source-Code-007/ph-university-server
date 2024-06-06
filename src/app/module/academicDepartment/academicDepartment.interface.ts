@@ -4,6 +4,7 @@ type TAcademicDepartment = {
     name: string,
     shortName: string,
     academicFaculty: Types.ObjectId,
+    totalStudent: number
 }
 
 export {TAcademicDepartment}

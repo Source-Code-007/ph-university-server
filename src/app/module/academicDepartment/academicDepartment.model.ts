@@ -5,6 +5,7 @@ const academicDepartmentSchema = new Schema<TAcademicDepartment>(
   {
     name: { type: String, required: true, unique: true },
     shortName: { type: String, required: true, unique: true },
+    totalStudent: { type: Number, default: 0},
     academicFaculty: {
       type: Schema.Types.ObjectId,
       ref: 'AcademicFaculty',

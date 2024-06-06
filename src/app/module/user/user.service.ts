@@ -9,8 +9,6 @@ import Batch from '../batch/batch.model'
 import AcademicDepartment from '../academicDepartment/academicDepartment.model'
 
 const insertStudentToDb = async (payload: TStudent & TUser) => {
-
-
   const session = await mongoose.startSession()
 
   try {
@@ -19,6 +17,10 @@ const insertStudentToDb = async (payload: TStudent & TUser) => {
     const department = await AcademicDepartment.findById(payload.academicInfo.department)
     const totalStudent = await Student.countDocuments({}).exec()
     const batch = await Batch.findById(payload.academicInfo?.batch)
+    const deptExistInBatch = await Batch.findOne({
+      department: payload.academicInfo.department,
+      _id: payload.academicInfo.batch,
+    })
 
     // console.log(department, 'department');
     // console.log(totalStudent, 'totalStudent');
@@ -28,6 +30,12 @@ const insertStudentToDb = async (payload: TStudent & TUser) => {
     }
     if (!batch) {
       throw new AppError(StatusCodes.BAD_REQUEST, 'Batch not found')
+    }
+    if (!deptExistInBatch) {
+      throw new AppError(
+        StatusCodes.BAD_REQUEST,
+        'Department not match with batch. Please provide correct  batch and dept id.',
+      )
     }
 
     // Update regSlNo and regCode and id
@@ -44,30 +52,32 @@ const insertStudentToDb = async (payload: TStudent & TUser) => {
       throw new AppError(StatusCodes.BAD_REQUEST, 'Batch is full')
     }
 
-    // Update roll and totalStudent
-      payload.academicInfo.roll = batch.totalStudent + 1
-      batch.totalStudent += 1
-      await batch.save({ session })
+    // Update roll and totalStudent of batch
+    payload.academicInfo.roll = batch.totalStudent + 1
+    batch.totalStudent += 1
+    await batch.save({ session })
 
+    // Update totalStudent of department
+    department.totalStudent += 1
+    await department.save({ session })
 
-      const userData: Partial<TUser> = {
-        id: regCode,
-        password: payload.password,
-        role: 'student',
-      };
+    const userData: Partial<TUser> = {
+      id: regCode,
+      password: payload.password,
+      role: 'student',
+    }
     // Save user
     const user = await User.create([userData], { session })
     if (!user?.length) {
       throw new AppError(StatusCodes.BAD_REQUEST, 'Failed to insert user to db')
     }
 
-
     const studentData: Partial<TStudent> = {
       ...payload,
       id: regCode,
       user: user[0]._id,
-      academicInfo: {...payload.academicInfo},
-    };
+      academicInfo: { ...payload.academicInfo },
+    }
     // Save student
     const student = await Student.create([studentData], { session })
     if (!student?.length) {
