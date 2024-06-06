@@ -3,20 +3,31 @@ import { Student } from './student.model'
 import { TStudent } from './student.interface'
 import { studentSearchableFields } from './students.contant'
 
-const getAllStudent = async (query:Record<string, unknown>) => {
-    let searchTerm = ''
 
-    if(query?.searchTerm){
-        searchTerm = query.searchTerm as string
-    }
+const getAllStudent = async (query: Record<string, unknown>) => {
+  const queryObj = { ...query }
 
+  const searchTerm = query?.searchTerm as string || ''
 
 
-  const students = await Student.find({
-    $or: studentSearchableFields.map(field=> (
-        {[field]: {$regex: searchTerm, $options: 'i'}}
-    ))
+  //   Search by first name, email and presentAddress
+  const searchQuery = Student.find({
+    $or: studentSearchableFields.map((field) => ({
+      [field]: { $regex: searchTerm, $options: 'i' },
+    })),
   })
+
+  const excludedFields = ['searchTerm', 'page', 'limit', 'sort']
+
+  excludedFields.forEach((el) => {
+    delete queryObj[el]
+  })
+
+  console.log(queryObj, 'queryObj');
+
+  //   Filter by query
+  const filterQuery = searchQuery
+    .find(queryObj)
     .select('-__v')
     .populate('user', '-createdAt -updatedAt -__v')
     .populate({
@@ -31,7 +42,13 @@ const getAllStudent = async (query:Record<string, unknown>) => {
       path: 'academicInfo.batch',
       select: '-createdAt -updatedAt -__v -department',
     })
-  return students
+
+  // sort
+  const sort = query?.sort || '-createdAt'
+
+  const sortQuery = await filterQuery.sort(sort as string)
+
+  return sortQuery
 }
 
 const getStudentById = async (id: string) => {
@@ -54,7 +71,6 @@ const getStudentById = async (id: string) => {
 }
 
 const updateStudentById = async (id: string, payload: Partial<TStudent>) => {
-
   const { name, guardian, ...restStudentData } = payload
   const modifiedUpdatedData: Record<string, unknown> = {
     ...restStudentData,
