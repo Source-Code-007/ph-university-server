@@ -7,7 +7,8 @@ import AppError from "../../errors/appError"
 
 const insertBatch: RequestHandler = catchAsync(
   async (req, res) => {
-    const batch = await batchServices.insertBatchToDb()
+    const department = req.body?.department
+    const batch = await batchServices.insertBatchToDb(department)
     sendResponse(res, StatusCodes.OK, {
       success: true,
       message: 'Batch inserted successfully!',
