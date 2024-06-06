@@ -55,8 +55,9 @@ const StudentSchema = new Schema<TStudent>({
     type: Schema.Types.ObjectId,
     // required: true,
     ref: 'User',
+    immutable:true
   },
-  academicInfo: { type: AcademicInfo, required: true },
+  academicInfo: { type: AcademicInfo, required: true, immutable:true },
   name: { type: NameSchema, required: true },
   profileImg: { type: String, required: true },
   gender: { type: String, required: true },

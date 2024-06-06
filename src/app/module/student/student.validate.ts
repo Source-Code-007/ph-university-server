@@ -30,7 +30,29 @@ const createStudentZodSchema = z.object({
   }),
 })
 
-const updateStudentZodSchema = createStudentZodSchema.deepPartial(); //TODO: make all properties optional if it's not work
+const updateStudentZodSchema = z.object({
+  name: z.object({
+    firstName: z.string().optional(),
+    middleName: z.string().optional(),
+    lastName: z.string().optional(),
+  }).optional(),
+  
+  profileImg: z.string().optional(),
+  gender: z.string().optional(),
+  dateOfBirth: z.string().optional(),
+  email: z.string().optional(),
+  phone: z.string().optional(),
+  nid: z.string().optional(),
+  presentAddress: z.string().optional(),
+  permanentAddress: z.string().optional(),
+  guardian: z.object({
+    name: z.string().optional(),
+    phone: z.string().optional(),
+    age: z.string().optional(),
+    email: z.string().optional(),
+  }).optional(),
+  bloodGroup: z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']).optional(),
+})
 
 
 

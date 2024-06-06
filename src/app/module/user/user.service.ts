@@ -34,7 +34,7 @@ const insertStudentToDb = async (payload: TStudent & TUser) => {
     if (!deptExistInBatch) {
       throw new AppError(
         StatusCodes.BAD_REQUEST,
-        'Department not match with batch. Please provide correct  batch and dept id.',
+        'Department does not match with batch. Please provide correct batch and department ID.',
       )
     }
 

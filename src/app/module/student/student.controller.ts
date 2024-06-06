@@ -4,6 +4,7 @@ import { Student } from './student.model'
 import { RequestHandler } from 'express'
 import { studentServices } from './student.service'
 import catchAsync from '../../utils/catchAsync'
+import AppError from '../../errors/appError'
 
 const getAllStudent: RequestHandler = catchAsync(async(req, res)=> {
     const student = await studentServices.getAllStudent()
@@ -23,7 +24,20 @@ const getStudentById: RequestHandler = catchAsync(async(req, res)=> {
     })
 })
 
+const updateStudentById: RequestHandler = catchAsync(async(req, res)=> {
+    const student = await studentServices.updateStudentById(req.params?.id, req.body)
+    if(!student){
+      throw new AppError(StatusCodes.BAD_REQUEST, 'Student not updated!')
+    }
+    sendResponse(res, StatusCodes.OK, {
+      success: true,
+      message: 'Student updated successfully!',
+      data: student,
+    })
+})
+
 export const studentController = {
     getAllStudent,
   getStudentById,
+  updateStudentById
 }
