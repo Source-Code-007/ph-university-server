@@ -1,14 +1,12 @@
 import { populate } from 'dotenv'
 import { Student } from './student.model'
 import { TStudent } from './student.interface'
-import { studentSearchableFields } from './students.contant'
-
+import { studentSearchableFields } from './students.constant'
 
 const getAllStudent = async (query: Record<string, unknown>) => {
   const queryObj = { ...query }
 
-  const searchTerm = query?.searchTerm as string || ''
-
+  const searchTerm = (query?.searchTerm as string) || ''
 
   //   Search by first name, email and presentAddress
   const searchQuery = Student.find({
@@ -17,18 +15,14 @@ const getAllStudent = async (query: Record<string, unknown>) => {
     })),
   })
 
-  const excludedFields = ['searchTerm', 'page', 'limit', 'sort']
-
+  const excludedFields = ['searchTerm', 'page', 'limit', 'sort', 'fields']
   excludedFields.forEach((el) => {
     delete queryObj[el]
   })
 
-  console.log(queryObj, 'queryObj');
-
   //   Filter by query
   const filterQuery = searchQuery
     .find(queryObj)
-    .select('-__v')
     .populate('user', '-createdAt -updatedAt -__v')
     .populate({
       path: 'academicInfo.department',
@@ -43,12 +37,21 @@ const getAllStudent = async (query: Record<string, unknown>) => {
       select: '-createdAt -updatedAt -__v -department',
     })
 
+    // Fields filtering
+    const fields = (query?.fields as string) || '-__v'
+    const fieldFilteringQuery = filterQuery.select(fields.split(',').join(' '))
+
   // sort
-  const sort = query?.sort || '-createdAt'
+  const sort = (query?.sort as string) || '-createdAt'
+  const sortQuery = fieldFilteringQuery.sort(sort)
 
-  const sortQuery = await filterQuery.sort(sort as string)
+  //   Paginate
+  const limit = Number(query?.limit) || 10
+  const skip = query?.page ? (Number(query?.page) - 1) * Number(limit) : 1
 
-  return sortQuery
+  const paginateQuery = sortQuery.limit(Number(limit)).skip(skip)
+
+  return paginateQuery
 }
 
 const getStudentById = async (id: string) => {

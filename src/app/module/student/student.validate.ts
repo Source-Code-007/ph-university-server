@@ -38,7 +38,7 @@ const updateStudentZodSchema = z.object({
   }).optional(),
   
   profileImg: z.string().optional(),
-  gender: z.string().optional(),
+  gender: z.enum(['male', 'female', 'other']).optional(),
   dateOfBirth: z.string().optional(),
   email: z.string().optional(),
   phone: z.string().optional(),

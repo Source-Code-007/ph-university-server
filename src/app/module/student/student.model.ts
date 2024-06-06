@@ -60,7 +60,7 @@ const StudentSchema = new Schema<TStudent>({
   academicInfo: { type: AcademicInfo, required: true, immutable:true },
   name: { type: NameSchema, required: true },
   profileImg: { type: String, required: true },
-  gender: { type: String, required: true },
+  gender: { type: String, enum:['male', 'female', 'other'], required: true },
   dateOfBirth: { type: Date, required: true },
   email: { type: String, required: true, unique: true },
   phone: { type: String, required: true, unique: true },
