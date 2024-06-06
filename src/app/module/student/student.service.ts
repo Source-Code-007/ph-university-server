@@ -1,9 +1,22 @@
 import { populate } from 'dotenv'
 import { Student } from './student.model'
 import { TStudent } from './student.interface'
+import { studentSearchableFields } from './students.contant'
 
-const getAllStudent = async () => {
-  const students = await Student.find()
+const getAllStudent = async (query:Record<string, unknown>) => {
+    let searchTerm = ''
+
+    if(query?.searchTerm){
+        searchTerm = query.searchTerm as string
+    }
+
+
+
+  const students = await Student.find({
+    $or: studentSearchableFields.map(field=> (
+        {[field]: {$regex: searchTerm, $options: 'i'}}
+    ))
+  })
     .select('-__v')
     .populate('user', '-createdAt -updatedAt -__v')
     .populate({
@@ -24,9 +37,19 @@ const getAllStudent = async () => {
 const getStudentById = async (id: string) => {
   const student = await Student.findById(id)
     .select('-__v')
-    .populate('user', '-createdAt -updatedAt -__v -department')
-    .populate('academicInfo.department')
-    .populate('academicInfo.batch')
+    .populate('user', '-createdAt -updatedAt -__v')
+    .populate({
+      path: 'academicInfo.department',
+      select: '-createdAt -updatedAt -__v',
+      populate: {
+        path: 'academicFaculty',
+        select: '-createdAt -updatedAt -__v',
+      },
+    })
+    .populate({
+      path: 'academicInfo.batch',
+      select: '-createdAt -updatedAt -__v -department',
+    })
   return student
 }
 
