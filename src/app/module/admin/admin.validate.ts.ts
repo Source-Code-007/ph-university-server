@@ -1,8 +1,6 @@
 import { z } from "zod";
 
 const createAdminZodSchema = z.object({
-    id: z.string(),
-    user: z.string(),
     designation: z.string(),
     name: z.object({
         firstName: z.string(),
@@ -10,7 +8,7 @@ const createAdminZodSchema = z.object({
         lastName: z.string(),
     }),
     gender: z.string(),
-    dateOfBirth: z.date(),
+    dateOfBirth: z.string(),
     email: z.string().email(),
     phone: z.string(),
     nid: z.string(),
@@ -22,8 +20,6 @@ const createAdminZodSchema = z.object({
 });
 
 const updateAdminZodSchema = z.object({
-    id: z.string().optional(),
-    user: z.string().optional(),
     designation: z.string().optional(),
     name: z.object({
         firstName: z.string().optional(),
@@ -31,7 +27,7 @@ const updateAdminZodSchema = z.object({
         lastName: z.string().optional(),
     }).optional(),
     gender: z.string().optional(),
-    dateOfBirth: z.date().optional(),
+    dateOfBirth: z.string().optional(),
     email: z.string().email().optional(),
     phone: z.string().optional(),
     nid: z.string().optional(),

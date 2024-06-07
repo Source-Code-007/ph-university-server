@@ -17,6 +17,24 @@ const insertStudent: RequestHandler = catchAsync(async (req, res) => {
 })
 
 
+const insertFaculty :RequestHandler = catchAsync(async(req, res)=> {
+  const faculty = await userServices.insertFacultyToDb(req.body)
+
+  sendResponse(res, StatusCodes.OK, {
+    success: true,
+    message: 'Faculty inserted successfully!',
+    data: faculty,
+  })
+})
+const insertAdmin :RequestHandler = catchAsync(async(req, res)=> {
+  const admin = await userServices.insertAdminToDb(req.body)
+
+  sendResponse(res, StatusCodes.OK, {
+    success: true,
+    message: 'Admin inserted successfully!',
+    data: admin,
+  })
+})
 
 const getAllUsers:RequestHandler = async (
   req,
@@ -55,89 +73,11 @@ const getUserById:RequestHandler = async (
   }
 }
 
-const deleteUserById:RequestHandler = async (
-  req,
-  res,
-  next,
-) => {
-  try {
-    const user = await userServices.deleteUserById(req.params.id)
-    if (!user) {
-      throw new AppError(StatusCodes.NOT_FOUND, 'User not found!')
-    }
-    sendResponse(res, StatusCodes.OK, {
-      success: true,
-      message: 'User is deleted successfully!',
-      data: user,
-    })
-  } catch (error: any) {
-    next(error)
-  }
-}
-
-const deleteAllUsers:RequestHandler = async (
-  req,
-  res,
-  next,
-) => {
-  try {
-    const user = await userServices.deleteAllUser()
-    sendResponse(res, StatusCodes.OK, {
-      success: true,
-      message: 'Users are deleted successfully!',
-      data: user,
-    })
-  } catch (error: any) {
-    next(error)
-  }
-}
-
-const updateUserById:RequestHandler = async (
-  req,
-  res,
-  next,
-) => {
-  try {
-    const user = await userServices.updateUserById(req.params?.id, req.body)
-    if (!user) {
-      throw new AppError(StatusCodes.NOT_FOUND, 'User not found!')
-    }
-    sendResponse(res, StatusCodes.OK, {
-      success: true,
-      message: 'User is updated successfully!',
-      data: user,
-    })
-  } catch (error: any) {
-    next(error)
-  }
-}
-
-const toggleUserStatus:RequestHandler = async (
-  req,
-  res,
-  next,
-) => {
-  try {
-    const user = await userServices.statusToggleUser(req.params?.id)
-    if (!user) {
-      throw new AppError(StatusCodes.NOT_FOUND, 'User not found!')
-    }
-    sendResponse(res, StatusCodes.OK, {
-      success: true,
-      message: `${user?.status === 'active' ? 'User activated successfully!' : 'User deactivated successfully!'}`,
-      data: user,
-    })
-  } catch (error: any) {
-    next(error)
-  }
-}
 
 export const userController = {
   insertStudent,
+  insertFaculty,
+  insertAdmin,
   getAllUsers,
   getUserById,
-  deleteUserById,
-  deleteAllUsers,
-  updateUserById,
-  toggleUserStatus,
 }

@@ -7,6 +7,10 @@ import mongoose from 'mongoose'
 import { Student } from '../student/student.model'
 import Batch from '../batch/batch.model'
 import AcademicDepartment from '../academicDepartment/academicDepartment.model'
+import { TFaculty } from '../faculty/faculty.interface'
+import { Faculty } from '../faculty/faculty.model'
+import { TAdmin } from '../admin/admin.interface'
+import { Admin } from '../admin/admin.model'
 
 const insertStudentToDb = async (payload: TStudent & TUser) => {
   const session = await mongoose.startSession()
@@ -14,7 +18,9 @@ const insertStudentToDb = async (payload: TStudent & TUser) => {
   try {
     session.startTransaction()
 
-    const department = await AcademicDepartment.findById(payload.academicInfo.department)
+    const department = await AcademicDepartment.findById(
+      payload.academicInfo.department,
+    )
     const totalStudent = await Student.countDocuments({}).exec()
     const batch = await Batch.findById(payload.academicInfo?.batch)
     const deptExistInBatch = await Batch.findOne({
@@ -44,7 +50,6 @@ const insertStudentToDb = async (payload: TStudent & TUser) => {
     payload.academicInfo.regSlNo = regSlNo
     payload.academicInfo.regCode = regCode
     payload.id = regCode
-    payload.id = regCode
 
     // Check if batch has reached the maximum student limit
     const maxStudentsPerBatch = Number(process.env.MAX_STUDENT_PER_BATCH) || 45 // Default to 45 if not set
@@ -58,7 +63,7 @@ const insertStudentToDb = async (payload: TStudent & TUser) => {
     await batch.save({ session })
 
     // Update totalStudent of department
-    department.totalStudent += 1
+    department.totalFaculty += 1
     await department.save({ session })
 
     const userData: Partial<TUser> = {
@@ -97,6 +102,109 @@ const insertStudentToDb = async (payload: TStudent & TUser) => {
   }
 }
 
+const insertFacultyToDb = async (payload: TFaculty & TUser) => {
+  const session = await mongoose.startSession()
+
+  try {
+    session.startTransaction()
+
+    const department = await AcademicDepartment.findById(
+      payload.academicDepartment,
+    )
+    const totalFaculty = await Faculty.countDocuments({}).exec()
+    if (!department) {
+      throw new AppError(StatusCodes.BAD_REQUEST, 'Department not found')
+    }
+
+    // Update id
+    const slNo = totalFaculty > 0 ? totalFaculty + 1 : 1
+    const id = `F-${department.shortName}-${slNo.toString().padStart(4, '0')}`
+
+    // Update totalFaculty of department
+    department.totalFaculty += 1
+    await department.save({ session })
+
+    const userData: Partial<TUser> = {
+      id,
+      password: payload.password,
+      role: 'faculty',
+    }
+    // Save user
+    const user = await User.create([userData], { session })
+    if (!user?.length) {
+      throw new AppError(StatusCodes.BAD_REQUEST, 'Failed to insert user to db')
+    }
+
+    const facultyData: Partial<TFaculty> = {
+      ...payload,
+      id,
+      user: user[0]._id,
+    }
+    // Save faculty
+    const faculty = await Faculty.create([facultyData], { session })
+    if (!faculty?.length) {
+      throw new AppError(
+        StatusCodes.BAD_REQUEST,
+        'Failed to insert faculty to db',
+      )
+    }
+
+    await session.commitTransaction()
+    return faculty[0]
+  } catch (err: any) {
+    await session.abortTransaction()
+    throw new Error(err)
+  } finally {
+    await session.endSession()
+  }
+}
+const insertAdminToDb = async (payload: TAdmin & TUser) => {
+  const session = await mongoose.startSession()
+
+  try {
+    session.startTransaction()
+
+    const totalAdmin = await Admin.countDocuments({}).exec()
+
+    // Update id
+    const slNo = totalAdmin > 0 ? totalAdmin + 1 : 1
+    const id = `A-${slNo.toString().padStart(4, '0')}`
+
+    const userData: Partial<TUser> = {
+      id,
+      password: payload.password,
+      role: 'admin',
+    }
+    // Save user
+    const user = await User.create([userData], { session })
+    if (!user?.length) {
+      throw new AppError(StatusCodes.BAD_REQUEST, 'Failed to insert user to db')
+    }
+
+    const adminData: Partial<TAdmin> = {
+      ...payload,
+      id,
+      user: user[0]._id,
+    }
+    // Save admin
+    const admin = await Admin.create([adminData], { session })
+    if (!admin?.length) {
+      throw new AppError(
+        StatusCodes.BAD_REQUEST,
+        'Failed to insert admin to db',
+      )
+    }
+
+    await session.commitTransaction()
+    return admin[0]
+  } catch (err: any) {
+    await session.abortTransaction()
+    throw new Error(err)
+  } finally {
+    await session.endSession()
+  }
+}
+
 const getAllUser = async () => {
   const users = await User.find({}).select('-__v')
   return users
@@ -107,43 +215,11 @@ const getSingleUserById = async (id: string) => {
   return user
 }
 
-const deleteUserById = async (id: string) => {
-  const user = await User.findByIdAndDelete(id).select('-__v')
-  return user
-}
-
-const deleteAllUser = async () => {
-  const users = await User.deleteMany({})
-  return users
-}
-
-const updateUserById = async (id: string, updatedUser: Partial<TUser>) => {
-  const user = await User.findByIdAndUpdate(id, updatedUser, {
-    new: true,
-  }).select('-__v')
-  return user
-}
-
-const statusToggleUser = async (id: string) => {
-  const user = await User.findById(id)
-  if (!user) {
-    throw new AppError(StatusCodes.NOT_FOUND, 'User not found!')
-  }
-  if (user.status === 'active') {
-    user.status = 'inactive'
-  } else {
-    user.status = 'active'
-  }
-  await user.save()
-  return user
-}
 
 export const userServices = {
   insertStudentToDb,
+  insertFacultyToDb,
+  insertAdminToDb,
   getAllUser,
   getSingleUserById,
-  deleteUserById,
-  deleteAllUser,
-  updateUserById,
-  statusToggleUser,
 }

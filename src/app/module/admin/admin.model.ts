@@ -16,7 +16,6 @@ const AdminSchema = new Schema<TAdmin>({
   id: { type: String },
   user: {
     type: Schema.Types.ObjectId,
-    required: true,
     ref: 'User',
     immutable: true,
   },
