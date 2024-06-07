@@ -2,56 +2,82 @@ import { populate } from 'dotenv'
 import { Student } from './student.model'
 import { TStudent } from './student.interface'
 import { studentSearchableFields } from './students.constant'
+import QueryBuilder from '../../builder/QueryBuilder'
 
 const getAllStudent = async (query: Record<string, unknown>) => {
   const queryObj = { ...query }
 
-  const searchTerm = (query?.searchTerm as string) || ''
+  // const searchTerm = (query?.searchTerm as string) || ''
 
-  //   Search by first name, email and presentAddress
-  const searchQuery = Student.find({
-    $or: studentSearchableFields.map((field) => ({
-      [field]: { $regex: searchTerm, $options: 'i' },
-    })),
-  })
+  // //   Search by first name, email and presentAddress
+  // const searchQuery = Student.find({
+  //   $or: studentSearchableFields.map((field) => ({
+  //     [field]: { $regex: searchTerm, $options: 'i' },
+  //   })),
+  // })
 
-  const excludedFields = ['searchTerm', 'page', 'limit', 'sort', 'fields']
-  excludedFields.forEach((el) => {
-    delete queryObj[el]
-  })
+  // const excludedFields = ['searchTerm', 'page', 'limit', 'sort', 'fields']
+  // excludedFields.forEach((el) => {
+  //   delete queryObj[el]
+  // })
 
-  //   Filter by query
-  const filterQuery = searchQuery
-    .find(queryObj)
-    .populate('user', '-createdAt -updatedAt -__v')
-    .populate({
-      path: 'academicInfo.department',
-      select: '-createdAt -updatedAt -__v',
-      populate: {
-        path: 'academicFaculty',
+  // //   Filter by query
+  // const filterQuery = searchQuery
+  //   .find(queryObj)
+  //   .populate('user', '-createdAt -updatedAt -__v')
+  //   .populate({
+  //     path: 'academicInfo.department',
+  //     select: '-createdAt -updatedAt -__v',
+  //     populate: {
+  //       path: 'academicFaculty',
+  //       select: '-createdAt -updatedAt -__v',
+  //     },
+  //   })
+  //   .populate({
+  //     path: 'academicInfo.batch',
+  //     select: '-createdAt -updatedAt -__v -department',
+  //   })
+
+  //   // Fields filtering
+  //   const fields = (query?.fields as string) || '-__v'
+  //   const fieldFilteringQuery = filterQuery.select(fields.split(',').join(' '))
+
+  // // sort
+  // const sort = (query?.sort as string) || '-createdAt'
+  // const sortQuery = fieldFilteringQuery.sort(sort)
+
+  // //   Paginate
+  // const limit = Number(query?.limit) || 10
+  // const skip = query?.page ? (Number(query?.page) - 1) * Number(limit) : 1
+
+  // const paginateQuery = sortQuery.limit(Number(limit)).skip(skip)
+
+  // return paginateQuery
+
+  const studentQuery = new QueryBuilder(Student.find(), query)
+    .searchQuery(studentSearchableFields)
+    .filterQuery()
+    .sortQuery()
+    .paginateQuery()
+    .fieldFilteringQuery()
+    .populateQuery([
+      { path: 'user', select: '-createdAt -updatedAt -__v' },
+      {
+        path: 'academicInfo.department',
         select: '-createdAt -updatedAt -__v',
+        populate: {
+          path: 'academicFaculty',
+          select: '-createdAt -updatedAt -__v',
+        },
       },
-    })
-    .populate({
-      path: 'academicInfo.batch',
-      select: '-createdAt -updatedAt -__v -department',
-    })
+      {
+        path: 'academicInfo.batch',
+        select: '-createdAt -updatedAt -__v -department',
+      },
+    ])
 
-    // Fields filtering
-    const fields = (query?.fields as string) || '-__v'
-    const fieldFilteringQuery = filterQuery.select(fields.split(',').join(' '))
-
-  // sort
-  const sort = (query?.sort as string) || '-createdAt'
-  const sortQuery = fieldFilteringQuery.sort(sort)
-
-  //   Paginate
-  const limit = Number(query?.limit) || 10
-  const skip = query?.page ? (Number(query?.page) - 1) * Number(limit) : 1
-
-  const paginateQuery = sortQuery.limit(Number(limit)).skip(skip)
-
-  return paginateQuery
+  const result = await studentQuery?.queryModel
+  return result
 }
 
 const getStudentById = async (id: string) => {

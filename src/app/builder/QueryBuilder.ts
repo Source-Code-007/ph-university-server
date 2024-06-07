@@ -1,4 +1,4 @@
-import { FilterQuery, Query } from 'mongoose'
+import { FilterQuery, PopulateOptions, Query } from 'mongoose'
 
 class QueryBuilder<T> {
   public queryModel: Query<T[], T>
@@ -21,9 +21,8 @@ class QueryBuilder<T> {
             }) as FilterQuery<T>,
         ),
       })
-
-      return this
-    }
+      }
+    return this
   }
 
   //   Filter method
@@ -32,10 +31,11 @@ class QueryBuilder<T> {
     const excludedFields = ['searchTerm', 'page', 'sort', 'limit', 'fields']
     excludedFields.forEach((el) => delete queryObj[el])
 
-    this.queryModel.find(queryObj as FilterQuery<T>)
+    this.queryModel = this.queryModel.find(queryObj as FilterQuery<T>)
 
     return this
   }
+
 
   //   Sort method
   public sortQuery() {
@@ -45,18 +45,29 @@ class QueryBuilder<T> {
   }
 
   // Paginate method
+  
   public paginateQuery() {
+    const page =this.query?.page ? Number(this.query?.page) : 1
     const limit = Number(this.query?.limit) || 10
-    const skip = this.query?.page ? (Number(this.query?.page) - 1) * limit : 1
+    const skip = (page - 1) * limit
     this.queryModel = this.queryModel.limit(limit).skip(skip)
     return this
   }
 
   // Field filtering
   public fieldFilteringQuery() {
-    const fields = (this.query?.fields as string) || '-__v'
-    this.queryModel = this.queryModel.select(fields.split(',').join(' '))
+    const fields = this.query?.fields ? (this.query?.fields as string).split(',').join(' ') : '-__v'
+    this.queryModel = this.queryModel.select(fields)
 
     return this
   }
+
+  // Populate query
+  public populateQuery(populateOptions: (string | PopulateOptions)[]){
+    this.queryModel = this.queryModel.populate(populateOptions)
+    return this
+  }
 }
+
+
+export default QueryBuilder
