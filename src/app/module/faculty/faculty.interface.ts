@@ -1,15 +1,15 @@
 import { Types } from "mongoose"
-type TAdminName = {
+type TFacultyName = {
     firstName: string,
     middleName?: string,
     lastName: string,
 }
 
-type TAdmin = {
+type TFaculty = {
     id: string,
     user: Types.ObjectId,
     designation: string,
-    name: TAdminName,
+    name: TFacultyName,
     gender: string,
     dateOfBirth: Date,
     email: string,
@@ -19,7 +19,8 @@ type TAdmin = {
     presentAddress: string,
     permanentAddress: string,
     profileImg: string,
+    academicDepartment: Types.ObjectId,
     isDeleted: boolean,
 }
 
-export {TAdmin, TAdminName}
+export {TFaculty, TFacultyName}

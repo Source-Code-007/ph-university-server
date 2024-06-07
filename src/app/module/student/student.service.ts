@@ -5,7 +5,7 @@ import { studentSearchableFields } from './students.constant'
 import QueryBuilder from '../../builder/QueryBuilder'
 
 const getAllStudent = async (query: Record<string, unknown>) => {
-  const queryObj = { ...query }
+  // const queryObj = { ...query }
 
   // const searchTerm = (query?.searchTerm as string) || ''
 

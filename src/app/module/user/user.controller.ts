@@ -18,10 +18,10 @@ const insertStudent: RequestHandler = catchAsync(async (req, res) => {
 
 
 
-const getAllUsers = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
+const getAllUsers:RequestHandler = async (
+  req,
+  res,
+  next,
 ) => {
   try {
     const users = await userServices.getAllUser()
@@ -35,10 +35,10 @@ const getAllUsers = async (
   }
 }
 
-const getUserById = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
+const getUserById:RequestHandler = async (
+  req,
+  res,
+  next,
 ) => {
   try {
     const user = await userServices.getSingleUserById(req.params?.id)
@@ -55,10 +55,10 @@ const getUserById = async (
   }
 }
 
-const deleteUserById = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
+const deleteUserById:RequestHandler = async (
+  req,
+  res,
+  next,
 ) => {
   try {
     const user = await userServices.deleteUserById(req.params.id)
@@ -75,10 +75,10 @@ const deleteUserById = async (
   }
 }
 
-const deleteAllUsers = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
+const deleteAllUsers:RequestHandler = async (
+  req,
+  res,
+  next,
 ) => {
   try {
     const user = await userServices.deleteAllUser()
@@ -92,10 +92,10 @@ const deleteAllUsers = async (
   }
 }
 
-const updateUserById = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
+const updateUserById:RequestHandler = async (
+  req,
+  res,
+  next,
 ) => {
   try {
     const user = await userServices.updateUserById(req.params?.id, req.body)
@@ -112,10 +112,10 @@ const updateUserById = async (
   }
 }
 
-const toggleUserStatus = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
+const toggleUserStatus:RequestHandler = async (
+  req,
+  res,
+  next,
 ) => {
   try {
     const user = await userServices.statusToggleUser(req.params?.id)

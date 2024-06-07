@@ -53,14 +53,14 @@ const StudentSchema = new Schema<TStudent>({
   id: { type: String },
   user: {
     type: Schema.Types.ObjectId,
-    // required: true,
+    required: true,
     ref: 'User',
-    immutable:true
+    immutable: true,
   },
-  academicInfo: { type: AcademicInfo, required: true, immutable:true },
+  academicInfo: { type: AcademicInfo, required: true, immutable: true },
   name: { type: NameSchema, required: true },
   profileImg: { type: String, required: true },
-  gender: { type: String, enum:['male', 'female', 'other'], required: true },
+  gender: { type: String, enum: ['male', 'female', 'other'], required: true },
   dateOfBirth: { type: Date, required: true },
   email: { type: String, required: true, unique: true },
   phone: { type: String, required: true, unique: true },
@@ -80,13 +80,13 @@ const StudentSchema = new Schema<TStudent>({
 // Pre hook
 StudentSchema.pre('save', async function (next) {
   try {
-
     // Set admissionYear as the year of admissionDate
     if (this.academicInfo?.admissionDate) {
-      this.academicInfo.admissionYear = this.academicInfo?.admissionDate?.getFullYear()
+      this.academicInfo.admissionYear =
+        this.academicInfo?.admissionDate?.getFullYear()
     }
     next()
-  } catch (e:any) {
+  } catch (e: any) {
     next(e)
   }
 })

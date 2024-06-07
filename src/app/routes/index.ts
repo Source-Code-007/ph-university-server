@@ -1,10 +1,11 @@
 import { Router } from 'express'
 import { studentRouter } from '../module/student/student.route'
 import { userRouter } from '../module/user/user.route'
-import { academicInfoRouter } from '../module/academicInfo/academicInfo.route'
 import { academicDepartmentRouter } from '../module/academicDepartment/academicDepartment.route'
 import { academicFacultyRouter } from '../module/academicFaculty/academicFaculty.route'
 import { batchRouter } from '../module/batch/batch.route'
+import { facultyRouter } from '../module/faculty/faculty.route'
+import { adminRouter } from '../module/admin/admin.route'
 
 const router = Router()
 const routes = [
@@ -17,8 +18,12 @@ const routes = [
     route: userRouter,
   },
   {
-    path: '/academic-info',
-    route: academicInfoRouter,
+    path: '/faculties',
+    route: facultyRouter,
+  },
+  {
+    path: '/admins',
+    route: adminRouter,
   },
   {
     path: '/academic-faculty',

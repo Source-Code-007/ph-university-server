@@ -1,8 +1,8 @@
-import { Schema, model } from 'mongoose'
-import { TAdmin, TAdminName } from './admin.interface'
+import { Schema, model } from "mongoose"
+import { TFaculty, TFacultyName } from "./faculty.interface"
 
 // Define the name schema
-const NameSchema = new Schema<TAdminName>(
+const NameSchema = new Schema<TFacultyName>(
   {
     firstName: { type: String, required: true },
     middleName: { type: String, default: null },
@@ -12,18 +12,19 @@ const NameSchema = new Schema<TAdminName>(
 )
 
 // Define the TStudent schema
-const AdminSchema = new Schema<TAdmin>({
+const FacultySchema = new Schema<TFaculty>({
   id: { type: String },
   user: {
     type: Schema.Types.ObjectId,
     required: true,
     ref: 'User',
-    immutable: true,
+    immutable:true
   },
+  academicDepartment: { type: Schema.Types.ObjectId, required: true, ref: 'AcademicDepartment', immutable:true },
   designation: { type: String, required: true },
   name: { type: NameSchema, required: true },
   profileImg: { type: String, required: true },
-  gender: { type: String, enum: ['male', 'female', 'other'], required: true },
+  gender: { type: String, enum:['male', 'female', 'other'], required: true },
   dateOfBirth: { type: Date, required: true },
   email: { type: String, required: true, unique: true },
   phone: { type: String, required: true, unique: true },
@@ -39,6 +40,6 @@ const AdminSchema = new Schema<TAdmin>({
 })
 
 // Create the model
-const Admin = model<TAdmin>('Admin', AdminSchema)
+const Faculty = model<TFaculty>('Faculty', FacultySchema)
 
-export { Admin }
+export { Faculty }
