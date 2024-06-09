@@ -45,16 +45,15 @@ const deleteCourseById: RequestHandler = catchAsync(async (req, res) => {
   })
 })
 const updateCourseById: RequestHandler = catchAsync(async (req, res) => {
-  // TODO:
-  // const course = await courseServices.updateCourseById(req.params?.id, req.body)
-  // if(!course){
-  //   throw new AppError(StatusCodes.BAD_REQUEST, 'Course not updated!')
-  // }
-  // sendResponse(res, StatusCodes.OK, {
-  //   success: true,
-  //   message: 'Course updated successfully!',
-  //   data: course,
-  // })
+  const course = await courseServices.updateCourseById(req.params?.id, req.body)
+  if(!course){
+    throw new AppError(StatusCodes.BAD_REQUEST, 'Course not updated!')
+  }
+  sendResponse(res, StatusCodes.OK, {
+    success: true,
+    message: 'Course updated successfully!',
+    data: course,
+  })
 })
 
 export const courseController = {

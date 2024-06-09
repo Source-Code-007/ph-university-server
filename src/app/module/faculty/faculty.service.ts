@@ -30,7 +30,7 @@ const updateFacultyById = async (
     }
   }
 
-  const faculty = await Faculty.findByIdAndUpdate(id, updatedFaculty, {
+  const faculty = await Faculty.findByIdAndUpdate(id, modifiedUpdatedFaculty, {
     new: true,
   }).select('-__v')
   return faculty
