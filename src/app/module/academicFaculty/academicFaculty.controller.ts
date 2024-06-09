@@ -51,14 +51,6 @@ const deleteAcademicFacultyById = catchAsync(async(req,res)=> {
     })
 })
 
-const deleteAllAcademicFaculties = catchAsync(async(req,res)=> {
-  const academicFaculties = await academicFacultyServices.deleteAllAcademicFaculties()
-  sendResponse(res, StatusCodes.OK, {
-    success: true,
-    message: 'Academic faculties are deleted successfully!',
-    data: academicFaculties,
-  })
-})
 
 const updateAcademicFacultyById = catchAsync(async(req,res)=> {
     const academicFaculty = await academicFacultyServices.updateAcademicFacultyById(req.params?.id, req.body)
@@ -78,6 +70,5 @@ export const academicFacultyController  = {
     getAllAcademicFaculties,
     getAcademicFacultyById,
     deleteAcademicFacultyById,
-    deleteAllAcademicFaculties,
     updateAcademicFacultyById,
 }

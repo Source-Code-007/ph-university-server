@@ -6,6 +6,7 @@ import { academicFacultyRouter } from '../module/academicFaculty/academicFaculty
 import { batchRouter } from '../module/batch/batch.route'
 import { facultyRouter } from '../module/faculty/faculty.route'
 import { adminRouter } from '../module/admin/admin.route'
+import { courseRouter } from '../module/course/course.route'
 
 const router = Router()
 const routes = [
@@ -40,6 +41,10 @@ const routes = [
   {
     path: '/batch',
     route: batchRouter,
+  },
+  {
+    path: '/course',
+    route: courseRouter,
   },
 ]
 

@@ -21,6 +21,15 @@ const updateFacultyById = async (
   id: string,
   updatedFaculty: Partial<TFaculty>,
 ) => {
+  const {name, ...restProps} = updatedFaculty
+  const modifiedUpdatedFaculty:Record<string, unknown> = {...restProps}
+
+  if(name && Object.keys(name)?.length>0){
+    for (const [key, value] of Object.entries(name)){
+      modifiedUpdatedFaculty[`name.${key}`]= value
+    }
+  }
+
   const faculty = await Faculty.findByIdAndUpdate(id, updatedFaculty, {
     new: true,
   }).select('-__v')

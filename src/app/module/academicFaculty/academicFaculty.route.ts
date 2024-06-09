@@ -13,7 +13,6 @@ router.post(
 )
 router.get('/', academicFacultyController.getAllAcademicFaculties)
 router.get('/:id', academicFacultyController.getAcademicFacultyById)
-router.delete('/', academicFacultyController.deleteAllAcademicFaculties)
 router.delete('/:id', academicFacultyController.deleteAcademicFacultyById)
 router.patch(
   '/:id',

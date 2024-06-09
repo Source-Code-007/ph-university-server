@@ -23,14 +23,10 @@ const getSingleAcademicFacultyById = async (id: string) => {
 
 const deleteAcademicFacultyById = async (id: string) => {
   const academicFaculty =
-    await AcademicFaculty.findByIdAndDelete(id).select('-__v')
+    await AcademicFaculty.findByIdAndUpdate(id, {isDeleted: true}, {new: true}).select('-__v')
   return academicFaculty
 }
 
-const deleteAllAcademicFaculties = async () => {
-  const academicFaculties = await AcademicFaculty.deleteMany({})
-  return academicFaculties
-}
 
 const updateAcademicFacultyById = async (
   id: string,
@@ -49,6 +45,5 @@ export const academicFacultyServices = {
   getAllAcademicFaculties,
   getSingleAcademicFacultyById,
   deleteAcademicFacultyById,
-  deleteAllAcademicFaculties,
   updateAcademicFacultyById,
 }

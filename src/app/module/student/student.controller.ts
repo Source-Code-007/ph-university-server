@@ -7,20 +7,20 @@ import catchAsync from '../../utils/catchAsync'
 import AppError from '../../errors/appError'
 
 const getAllStudent: RequestHandler = catchAsync(async(req, res)=> {
-    const student = await studentServices.getAllStudent(req.query)
+    const students = await studentServices.getAllStudent(req.query)
     sendResponse(res, StatusCodes.OK, {
       success: true,
       message: 'Students are retrieved successfully!',
-      data: student,
+      data: students,
     })
 })
 
 const getStudentById: RequestHandler = catchAsync(async(req, res)=> {
-    const students = await studentServices.getStudentById(req.params?.id)
+    const student = await studentServices.getStudentById(req.params?.id)
     sendResponse(res, StatusCodes.OK, {
       success: true,
       message: 'Student is retrieved successfully!',
-      data: students,
+      data: student,
     })
 })
 
