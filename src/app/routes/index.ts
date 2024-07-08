@@ -7,6 +7,7 @@ import { batchRouter } from '../module/batch/batch.route'
 import { facultyRouter } from '../module/faculty/faculty.route'
 import { adminRouter } from '../module/admin/admin.route'
 import { courseRouter } from '../module/course/course.route'
+import { authRouter } from '../module/auth/auth.route'
 
 const router = Router()
 const routes = [
@@ -45,6 +46,10 @@ const routes = [
   {
     path: '/course',
     route: courseRouter,
+  },
+  {
+    path: '/auth',
+    route: authRouter,
   },
 ]
 
