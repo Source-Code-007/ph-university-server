@@ -1,4 +1,3 @@
-import { populate } from 'dotenv'
 import { Student } from './student.model'
 import { TStudent } from './student.interface'
 import { studentSearchableFields } from './students.constant'

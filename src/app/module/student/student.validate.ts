@@ -6,7 +6,7 @@ const createStudentZodSchema = z.object({
     middleName: z.string().optional(),
     lastName: z.string(),
   }),
-  
+
   profileImg: z.string(),
   gender: z.string(),
   dateOfBirth: z.string(),
@@ -31,12 +31,14 @@ const createStudentZodSchema = z.object({
 })
 
 const updateStudentZodSchema = z.object({
-  name: z.object({
-    firstName: z.string().optional(),
-    middleName: z.string().optional(),
-    lastName: z.string().optional(),
-  }).optional(),
-  
+  name: z
+    .object({
+      firstName: z.string().optional(),
+      middleName: z.string().optional(),
+      lastName: z.string().optional(),
+    })
+    .optional(),
+
   profileImg: z.string().optional(),
   gender: z.enum(['male', 'female', 'other']).optional(),
   dateOfBirth: z.string().optional(),
@@ -45,15 +47,17 @@ const updateStudentZodSchema = z.object({
   nid: z.string().optional(),
   presentAddress: z.string().optional(),
   permanentAddress: z.string().optional(),
-  guardian: z.object({
-    name: z.string().optional(),
-    phone: z.string().optional(),
-    age: z.string().optional(),
-    email: z.string().optional(),
-  }).optional(),
-  bloodGroup: z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']).optional(),
+  guardian: z
+    .object({
+      name: z.string().optional(),
+      phone: z.string().optional(),
+      age: z.string().optional(),
+      email: z.string().optional(),
+    })
+    .optional(),
+  bloodGroup: z
+    .enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'])
+    .optional(),
 })
-
-
 
 export { createStudentZodSchema, updateStudentZodSchema }

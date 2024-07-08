@@ -25,9 +25,9 @@ const FacultySchema = new Schema<TFaculty>({
   profileImg: { type: String, required: true },
   gender: { type: String, enum:['male', 'female', 'other'], required: true },
   dateOfBirth: { type: Date, required: true },
-  email: { type: String, required: true, unique: true },
-  phone: { type: String, required: true, unique: true },
-  nid: { type: String, required: true, unique: true },
+  email: { type: String, required: true, },
+  phone: { type: String, required: true, },
+  nid: { type: String, required: true, },
   presentAddress: { type: String, required: true },
   permanentAddress: { type: String, required: true },
   bloodGroup: {

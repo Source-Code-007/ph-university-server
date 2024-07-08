@@ -16,7 +16,7 @@ app.get('/test', async(req, res) => {
 })
 
 // parser
-app.use(cors())
+app.use(cors({origin: '*', credentials: true}))
 app.use(express.json())
 
 // Router

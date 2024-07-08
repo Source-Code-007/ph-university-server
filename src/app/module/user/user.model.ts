@@ -1,14 +1,37 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Schema, model } from 'mongoose'
 import { TUser } from './user.interface'
+import bcrypt from 'bcrypt'
 
-const UserSchema = new Schema<TUser>({
-  id: { type: String }, //FK
-  password: { type: String, required: [true, 'Password is required'] },
-  needsPasswordChange: { type: Boolean, default: false},
-  role: { type: String, enum: ['admin', 'faculty', 'student'], required: true },
-  status: { type: String, enum: ['active', 'inactive'], default: 'active' },
-  isDeleted: { type: Boolean, default: false } 
-},{timestamps: true})
+const UserSchema = new Schema<TUser>(
+  {
+    id: { type: String }, //FK
+    password: { type: String, required: [true, 'Password is required'] },
+    needsPasswordChange: { type: Boolean, default: false },
+    role: {
+      type: String,
+      enum: ['admin', 'faculty', 'student'],
+      required: true,
+    },
+    status: { type: String, enum: ['active', 'inactive'], default: 'active' },
+    isDeleted: { type: Boolean, default: false },
+  },
+  { timestamps: true },
+)
 
-const User = model<TUser>('User', UserSchema) 
+UserSchema.pre<TUser>('save', async function (next) {
+  try {
+    const hashPass = await bcrypt.hash(
+      this.password,
+      Number(process.env.SALT_ROUNDS),
+    )
+
+    this.password = hashPass
+    next()
+  } catch (e: any) {
+    next(e)
+  }
+})
+
+const User = model<TUser>('User', UserSchema)
 export default User

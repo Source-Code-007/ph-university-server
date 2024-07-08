@@ -10,6 +10,9 @@ router.post(
   zodValidateHandler(createCourseZodSchema),
   courseController.insertCourse,
 )
+
+router.put('/:courseId/assign-faculties', ) //TODO: Implement this route
+
 router.get('/', courseController.getAllCourse)
 router.get('/:id', courseController.getSingleCourseById)
 router.delete('/:id', courseController.deleteCourseById)

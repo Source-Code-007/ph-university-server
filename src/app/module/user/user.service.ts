@@ -15,10 +15,25 @@ import { Admin } from '../admin/admin.model'
 const insertStudentToDb = async (payload: TStudent & TUser) => {
   const session = await mongoose.startSession()
 
+
   try {
     session.startTransaction()
 
-    const department = await AcademicDepartment.findById(
+
+    const alreadyExistEmail = await Student.findOne({email:payload.email})
+    const alreadyExistNid = await Student.findOne({nid:payload.nid})
+    const alreadyExistPhone = await Student.findOne({phone:payload.phone})
+    if(alreadyExistEmail){
+      throw new AppError(StatusCodes.BAD_REQUEST, 'Email is already exist. Try with different email!')
+    }
+    if(alreadyExistNid){
+      throw new AppError(StatusCodes.BAD_REQUEST, 'NID is already exist. Try with different NID!')
+    }
+    if(alreadyExistPhone){
+      throw new AppError(StatusCodes.BAD_REQUEST, 'Phone is already exist. Try with different phone!')
+    }
+
+    const academicDepartment = await AcademicDepartment.findById(
       payload.academicInfo.department,
     )
     const totalStudent = await Student.countDocuments({}).exec()
@@ -31,7 +46,7 @@ const insertStudentToDb = async (payload: TStudent & TUser) => {
     // console.log(department, 'department');
     // console.log(totalStudent, 'totalStudent');
 
-    if (!department) {
+    if (!academicDepartment) {
       throw new AppError(StatusCodes.BAD_REQUEST, 'Department not found')
     }
     if (!batch) {
@@ -46,7 +61,7 @@ const insertStudentToDb = async (payload: TStudent & TUser) => {
 
     // Update regSlNo and regCode and id
     const regSlNo = totalStudent > 0 ? totalStudent + 1 : 1
-    const regCode = `${department.shortName}-${batch?.batch}-${regSlNo}`
+    const regCode = `${academicDepartment.shortName}-${batch?.batch}-${regSlNo}`
     payload.academicInfo.regSlNo = regSlNo
     payload.academicInfo.regCode = regCode
     payload.id = regCode
@@ -63,8 +78,8 @@ const insertStudentToDb = async (payload: TStudent & TUser) => {
     await batch.save({ session })
 
     // Update totalStudent of department
-    department.totalFaculty += 1
-    await department.save({ session })
+    academicDepartment.totalStudent += 1
+    await academicDepartment.save({ session })
 
     const userData: Partial<TUser> = {
       id: regCode,
@@ -105,8 +120,24 @@ const insertStudentToDb = async (payload: TStudent & TUser) => {
 const insertFacultyToDb = async (payload: TFaculty & TUser) => {
   const session = await mongoose.startSession()
 
+
   try {
     session.startTransaction()
+
+
+    const alreadyExistEmail = await Faculty.findOne({email:payload.email})
+    const alreadyExistNid = await Faculty.findOne({nid:payload.nid})
+    const alreadyExistPhone = await Faculty.findOne({phone:payload.phone})
+    if(alreadyExistEmail){
+      throw new AppError(StatusCodes.BAD_REQUEST, 'Email is already exist. Try with different email!')
+    }
+    if(alreadyExistNid){
+      throw new AppError(StatusCodes.BAD_REQUEST, 'NID is already exist. Try with different NID!')
+    }
+    if(alreadyExistPhone){
+      throw new AppError(StatusCodes.BAD_REQUEST, 'Phone is already exist. Try with different phone!')
+    }
+
 
     const department = await AcademicDepartment.findById(
       payload.academicDepartment,
@@ -158,11 +189,28 @@ const insertFacultyToDb = async (payload: TFaculty & TUser) => {
     await session.endSession()
   }
 }
+
 const insertAdminToDb = async (payload: TAdmin & TUser) => {
   const session = await mongoose.startSession()
 
+
   try {
     session.startTransaction()
+
+    const alreadyExistEmail = await Faculty.findOne({email:payload.email})
+    const alreadyExistNid = await Faculty.findOne({nid:payload.nid})
+    const alreadyExistPhone = await Faculty.findOne({phone:payload.phone})
+    if(alreadyExistEmail){
+      throw new AppError(StatusCodes.BAD_REQUEST, 'Email is already exist. Try with different email!')
+    }
+    if(alreadyExistNid){
+      throw new AppError(StatusCodes.BAD_REQUEST, 'NID is already exist. Try with different NID!')
+    }
+    if(alreadyExistPhone){
+      throw new AppError(StatusCodes.BAD_REQUEST, 'Phone is already exist. Try with different phone!')
+    }
+
+    
 
     const totalAdmin = await Admin.countDocuments({}).exec()
 
@@ -175,6 +223,7 @@ const insertAdminToDb = async (payload: TAdmin & TUser) => {
       password: payload.password,
       role: 'admin',
     }
+
     // Save user
     const user = await User.create([userData], { session })
     if (!user?.length) {

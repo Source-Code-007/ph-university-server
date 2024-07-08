@@ -1,9 +1,6 @@
-import { Schema, model, startSession } from 'mongoose'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Schema, model } from 'mongoose'
 import { TAcadmicInfo, TGuardian, TName, TStudent } from './student.interface'
-import Batch from '../batch/batch.model'
-import AppError from '../../errors/appError'
-import { StatusCodes } from 'http-status-codes'
-import AcademicDepartment from '../academicDepartment/academicDepartment.model'
 
 // Define the TGuardian schema
 const GuardianSchema = new Schema<TGuardian>(
@@ -62,9 +59,9 @@ const StudentSchema = new Schema<TStudent>({
   profileImg: { type: String, required: true },
   gender: { type: String, enum: ['male', 'female', 'other'], required: true },
   dateOfBirth: { type: Date, required: true },
-  email: { type: String, required: true, unique: true },
-  phone: { type: String, required: true, unique: true },
-  nid: { type: String, required: true, unique: true },
+  email: { type: String, required: true },
+  phone: { type: String, required: true },
+  nid: { type: String, required: true },
   presentAddress: { type: String, required: true },
   permanentAddress: { type: String, required: true },
   guardian: { type: GuardianSchema, required: true },
