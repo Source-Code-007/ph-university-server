@@ -9,11 +9,13 @@ const zodValidateHandler_1 = __importDefault(require("../../middleware/zodValida
 const user_controller_1 = require("./user.controller");
 const student_validate_1 = require("../student/student.validate");
 const faculty_validate_ts_1 = require("../faculty/faculty.validate.ts");
-const admin_validate_ts_1 = require("../admin/admin.validate.ts");
+const admin_validate_1 = require("../admin/admin.validate");
+const auth_1 = __importDefault(require("../../middleware/auth"));
+const user_constant_1 = require("./user.constant");
 const router = (0, express_1.Router)();
 exports.userRouter = router;
-router.post('/create-student', (0, zodValidateHandler_1.default)(student_validate_1.createStudentZodSchema), user_controller_1.userController.insertStudent);
+router.post('/create-student', (0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN), (0, zodValidateHandler_1.default)(student_validate_1.createStudentZodSchema), user_controller_1.userController.insertStudent);
 router.post('/create-faculty', (0, zodValidateHandler_1.default)(faculty_validate_ts_1.createFacultyZodSchema), user_controller_1.userController.insertFaculty);
-router.post('/create-admin', (0, zodValidateHandler_1.default)(admin_validate_ts_1.createAdminZodSchema), user_controller_1.userController.insertAdmin);
+router.post('/create-admin', (0, zodValidateHandler_1.default)(admin_validate_1.createAdminZodSchema), user_controller_1.userController.insertAdmin);
 router.get('/', user_controller_1.userController.getAllUsers);
 router.get('/:id', user_controller_1.userController.getUserById);

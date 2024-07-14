@@ -6,11 +6,14 @@ import { userController } from './user.controller'
 import { createStudentZodSchema } from '../student/student.validate'
 import { createFacultyZodSchema } from '../faculty/faculty.validate.ts'
 import { createAdminZodSchema } from '../admin/admin.validate'
+import auth from '../../middleware/auth'
+import { USER_ROLE } from './user.constant'
 
 const router = Router()
 
 router.post(
   '/create-student',
+  auth(USER_ROLE.ADMIN),
   zodValidateHandler(createStudentZodSchema),
   userController.insertStudent,
 )

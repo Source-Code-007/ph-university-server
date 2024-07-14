@@ -16,22 +16,24 @@ const AdminSchema = new mongoose_1.Schema({
         ref: 'User',
         immutable: true,
     },
-    designation: { type: String, required: true },
+    designation: {
+        type: String,
+        enum: ['admin', 'super admin'],
+        default: 'admin',
+    },
     name: { type: NameSchema, required: true },
     profileImg: { type: String, required: true },
     gender: { type: String, enum: ['male', 'female', 'other'], required: true },
     dateOfBirth: { type: Date, required: true },
-    email: { type: String, required: true, unique: true },
-    phone: { type: String, required: true, unique: true },
-    nid: { type: String, required: true, unique: true },
-    presentAddress: { type: String, required: true },
-    permanentAddress: { type: String, required: true },
+    email: { type: String, required: true },
+    phone: { type: String, required: true },
+    nid: { type: String, required: true },
     bloodGroup: {
         type: String,
         enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
         required: true,
     },
-    isDeleted: { type: Boolean, required: true, default: false },
+    isDeleted: { type: Boolean, default: false },
 });
 // Create the model
 const Admin = (0, mongoose_1.model)('Admin', AdminSchema);

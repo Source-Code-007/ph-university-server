@@ -1,10 +1,12 @@
 type TUser = {
-    id: string,
-    password: string,
-    needsPasswordChange: Boolean,
-    role: 'admin' | 'faculty' | 'student',
-    status: 'active' | 'inactive',
-    isDeleted: boolean,
+  id: string
+  password: string
+  needsPasswordChange: boolean
+  role: 'admin' | 'faculty' | 'student'
+  status: 'active' | 'inactive'
+  isDeleted: boolean
 }
 
-export {TUser}
+type TUserRole = 'admin' | 'faculty' | 'student'
+
+export { TUser, TUserRole }

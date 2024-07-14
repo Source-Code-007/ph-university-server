@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateFacultyZodSchema = exports.createFacultyZodSchema = void 0;
+exports.updateAdminZodSchema = exports.createAdminZodSchema = void 0;
 const zod_1 = require("zod");
-const createFacultyZodSchema = zod_1.z.object({
-    designation: zod_1.z.string(),
+const createAdminZodSchema = zod_1.z.object({
+    designation: zod_1.z.enum(['admin', 'super admin']).optional(),
     name: zod_1.z.object({
         firstName: zod_1.z.string(),
         middleName: zod_1.z.string().optional(),
@@ -15,15 +15,12 @@ const createFacultyZodSchema = zod_1.z.object({
     phone: zod_1.z.string(),
     nid: zod_1.z.string(),
     bloodGroup: zod_1.z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']),
-    presentAddress: zod_1.z.string(),
-    permanentAddress: zod_1.z.string(),
     profileImg: zod_1.z.string(),
-    academicDepartment: zod_1.z.string(),
     isDeleted: zod_1.z.boolean().optional(),
 });
-exports.createFacultyZodSchema = createFacultyZodSchema;
-const updateFacultyZodSchema = zod_1.z.object({
-    designation: zod_1.z.string().optional(),
+exports.createAdminZodSchema = createAdminZodSchema;
+const updateAdminZodSchema = zod_1.z.object({
+    designation: zod_1.z.enum(['admin', 'super admin']).optional(),
     name: zod_1.z
         .object({
         firstName: zod_1.z.string().optional(),
@@ -39,10 +36,7 @@ const updateFacultyZodSchema = zod_1.z.object({
     bloodGroup: zod_1.z
         .enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'])
         .optional(),
-    presentAddress: zod_1.z.string().optional(),
-    permanentAddress: zod_1.z.string().optional(),
     profileImg: zod_1.z.string().optional(),
-    academicDepartment: zod_1.z.string().optional(),
     isDeleted: zod_1.z.boolean().optional(),
 });
-exports.updateFacultyZodSchema = updateFacultyZodSchema;
+exports.updateAdminZodSchema = updateAdminZodSchema;

@@ -19,7 +19,7 @@ const appError_1 = __importDefault(require("../../errors/appError"));
 const http_status_codes_1 = require("http-status-codes");
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const getAllFaculty = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const faculty = yield faculty_service_1.facultyServices.getAllFaculty();
+    const faculty = yield faculty_service_1.facultyServices.getAllFaculty(req.query);
     (0, sendResponse_1.default)(res, http_status_codes_1.StatusCodes.OK, {
         success: true,
         message: 'Faculties are retrieved successfully!',

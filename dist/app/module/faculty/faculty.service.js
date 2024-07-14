@@ -19,15 +19,23 @@ var __rest = (this && this.__rest) || function (s, e) {
         }
     return t;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.facultyServices = void 0;
+const QueryBuilder_1 = __importDefault(require("../../builder/QueryBuilder"));
 const faculty_model_1 = require("./faculty.model");
-const getAllFaculty = () => __awaiter(void 0, void 0, void 0, function* () {
-    const faculty = yield faculty_model_1.Faculty.find({}).select('-__v').populate('user', '-createdAt -updatedAt -__v').populate('academicDepartment', '-createdAt -updatedAt -__v');
+const getAllFaculty = (query) => __awaiter(void 0, void 0, void 0, function* () {
+    const facultyQuery = new QueryBuilder_1.default(faculty_model_1.Faculty.find({}), query).searchQuery(['designation']).filterQuery().sortQuery().fieldFilteringQuery().paginateQuery().populateQuery([{ path: 'user', select: '-createdAt -updatedAt -__v' }, { path: 'academicDepartment', select: '-createdAt -updatedAt -__v' }]);
+    const faculty = yield facultyQuery.queryModel;
     return faculty;
 });
 const getSingleFacultyById = (id) => __awaiter(void 0, void 0, void 0, function* () {
-    const faculty = yield faculty_model_1.Faculty.findById(id).select('-__v').populate('user', '-createdAt -updatedAt -__v').populate('academicDepartment', '-createdAt -updatedAt -__v');
+    const faculty = yield faculty_model_1.Faculty.findById(id)
+        .select('-__v')
+        .populate('user', '-createdAt -updatedAt -__v')
+        .populate('academicDepartment', '-createdAt -updatedAt -__v');
     return faculty;
 });
 const deleteFacultyById = (id) => __awaiter(void 0, void 0, void 0, function* () {

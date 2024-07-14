@@ -32,11 +32,13 @@ const createStudentZodSchema = zod_1.z.object({
 });
 exports.createStudentZodSchema = createStudentZodSchema;
 const updateStudentZodSchema = zod_1.z.object({
-    name: zod_1.z.object({
+    name: zod_1.z
+        .object({
         firstName: zod_1.z.string().optional(),
         middleName: zod_1.z.string().optional(),
         lastName: zod_1.z.string().optional(),
-    }).optional(),
+    })
+        .optional(),
     profileImg: zod_1.z.string().optional(),
     gender: zod_1.z.enum(['male', 'female', 'other']).optional(),
     dateOfBirth: zod_1.z.string().optional(),
@@ -45,12 +47,16 @@ const updateStudentZodSchema = zod_1.z.object({
     nid: zod_1.z.string().optional(),
     presentAddress: zod_1.z.string().optional(),
     permanentAddress: zod_1.z.string().optional(),
-    guardian: zod_1.z.object({
+    guardian: zod_1.z
+        .object({
         name: zod_1.z.string().optional(),
         phone: zod_1.z.string().optional(),
         age: zod_1.z.string().optional(),
         email: zod_1.z.string().optional(),
-    }).optional(),
-    bloodGroup: zod_1.z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']).optional(),
+    })
+        .optional(),
+    bloodGroup: zod_1.z
+        .enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'])
+        .optional(),
 });
 exports.updateStudentZodSchema = updateStudentZodSchema;

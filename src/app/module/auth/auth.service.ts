@@ -19,12 +19,15 @@ const login = async (loginInfo: TLoginUser) => {
 
   const jwtPayload = { id: user.id, role: user.role }
 
-  const token = jwt.sign(jwtPayload, process.env.JWT_PRIVATE_KEY as string, {
-    expiresIn: '100d',
-  })
+  const accessToken = jwt.sign(
+    jwtPayload,
+    process.env.JWT_PRIVATE_KEY as string,
+    {
+      expiresIn: '100d',
+    },
+  )
 
-  return { jwtToken: token, data: user }
+  return { accessToken, data: user, needsPasswordChange:user?.needsPasswordChange }
 }
 
-
-export const authServices = {login}
+export const authServices = { login }

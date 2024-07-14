@@ -9,6 +9,7 @@ const batch_route_1 = require("../module/batch/batch.route");
 const faculty_route_1 = require("../module/faculty/faculty.route");
 const admin_route_1 = require("../module/admin/admin.route");
 const course_route_1 = require("../module/course/course.route");
+const auth_route_1 = require("../module/auth/auth.route");
 const router = (0, express_1.Router)();
 const routes = [
     {
@@ -46,6 +47,10 @@ const routes = [
     {
         path: '/course',
         route: course_route_1.courseRouter,
+    },
+    {
+        path: '/auth',
+        route: auth_route_1.authRouter,
     },
 ];
 routes.forEach((route) => router.use(route.path, route.route));

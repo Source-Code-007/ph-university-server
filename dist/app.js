@@ -22,7 +22,7 @@ app.get('/test', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.send('Test route');
 }));
 // parser
-app.use((0, cors_1.default)());
+app.use((0, cors_1.default)({ origin: '*', credentials: true }));
 app.use(express_1.default.json());
 // Router
 app.use('/api/v1', routes_1.default);

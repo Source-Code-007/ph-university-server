@@ -15,22 +15,29 @@ import { Admin } from '../admin/admin.model'
 const insertStudentToDb = async (payload: TStudent & TUser) => {
   const session = await mongoose.startSession()
 
-
   try {
     session.startTransaction()
 
-
-    const alreadyExistEmail = await Student.findOne({email:payload.email})
-    const alreadyExistNid = await Student.findOne({nid:payload.nid})
-    const alreadyExistPhone = await Student.findOne({phone:payload.phone})
-    if(alreadyExistEmail){
-      throw new AppError(StatusCodes.BAD_REQUEST, 'Email is already exist. Try with different email!')
+    const alreadyExistEmail = await Student.findOne({ email: payload.email })
+    const alreadyExistNid = await Student.findOne({ nid: payload.nid })
+    const alreadyExistPhone = await Student.findOne({ phone: payload.phone })
+    if (alreadyExistEmail) {
+      throw new AppError(
+        StatusCodes.BAD_REQUEST,
+        'Email is already exist. Try with different email!',
+      )
     }
-    if(alreadyExistNid){
-      throw new AppError(StatusCodes.BAD_REQUEST, 'NID is already exist. Try with different NID!')
+    if (alreadyExistNid) {
+      throw new AppError(
+        StatusCodes.BAD_REQUEST,
+        'NID is already exist. Try with different NID!',
+      )
     }
-    if(alreadyExistPhone){
-      throw new AppError(StatusCodes.BAD_REQUEST, 'Phone is already exist. Try with different phone!')
+    if (alreadyExistPhone) {
+      throw new AppError(
+        StatusCodes.BAD_REQUEST,
+        'Phone is already exist. Try with different phone!',
+      )
     }
 
     const academicDepartment = await AcademicDepartment.findById(
@@ -84,6 +91,7 @@ const insertStudentToDb = async (payload: TStudent & TUser) => {
     const userData: Partial<TUser> = {
       id: regCode,
       password: payload.password,
+      needsPasswordChange: true,
       role: 'student',
     }
     // Save user
@@ -120,24 +128,30 @@ const insertStudentToDb = async (payload: TStudent & TUser) => {
 const insertFacultyToDb = async (payload: TFaculty & TUser) => {
   const session = await mongoose.startSession()
 
-
   try {
     session.startTransaction()
 
-
-    const alreadyExistEmail = await Faculty.findOne({email:payload.email})
-    const alreadyExistNid = await Faculty.findOne({nid:payload.nid})
-    const alreadyExistPhone = await Faculty.findOne({phone:payload.phone})
-    if(alreadyExistEmail){
-      throw new AppError(StatusCodes.BAD_REQUEST, 'Email is already exist. Try with different email!')
+    const alreadyExistEmail = await Faculty.findOne({ email: payload.email })
+    const alreadyExistNid = await Faculty.findOne({ nid: payload.nid })
+    const alreadyExistPhone = await Faculty.findOne({ phone: payload.phone })
+    if (alreadyExistEmail) {
+      throw new AppError(
+        StatusCodes.BAD_REQUEST,
+        'Email is already exist. Try with different email!',
+      )
     }
-    if(alreadyExistNid){
-      throw new AppError(StatusCodes.BAD_REQUEST, 'NID is already exist. Try with different NID!')
+    if (alreadyExistNid) {
+      throw new AppError(
+        StatusCodes.BAD_REQUEST,
+        'NID is already exist. Try with different NID!',
+      )
     }
-    if(alreadyExistPhone){
-      throw new AppError(StatusCodes.BAD_REQUEST, 'Phone is already exist. Try with different phone!')
+    if (alreadyExistPhone) {
+      throw new AppError(
+        StatusCodes.BAD_REQUEST,
+        'Phone is already exist. Try with different phone!',
+      )
     }
-
 
     const department = await AcademicDepartment.findById(
       payload.academicDepartment,
@@ -193,24 +207,30 @@ const insertFacultyToDb = async (payload: TFaculty & TUser) => {
 const insertAdminToDb = async (payload: TAdmin & TUser) => {
   const session = await mongoose.startSession()
 
-
   try {
     session.startTransaction()
 
-    const alreadyExistEmail = await Faculty.findOne({email:payload.email})
-    const alreadyExistNid = await Faculty.findOne({nid:payload.nid})
-    const alreadyExistPhone = await Faculty.findOne({phone:payload.phone})
-    if(alreadyExistEmail){
-      throw new AppError(StatusCodes.BAD_REQUEST, 'Email is already exist. Try with different email!')
+    const alreadyExistEmail = await Faculty.findOne({ email: payload.email })
+    const alreadyExistNid = await Faculty.findOne({ nid: payload.nid })
+    const alreadyExistPhone = await Faculty.findOne({ phone: payload.phone })
+    if (alreadyExistEmail) {
+      throw new AppError(
+        StatusCodes.BAD_REQUEST,
+        'Email is already exist. Try with different email!',
+      )
     }
-    if(alreadyExistNid){
-      throw new AppError(StatusCodes.BAD_REQUEST, 'NID is already exist. Try with different NID!')
+    if (alreadyExistNid) {
+      throw new AppError(
+        StatusCodes.BAD_REQUEST,
+        'NID is already exist. Try with different NID!',
+      )
     }
-    if(alreadyExistPhone){
-      throw new AppError(StatusCodes.BAD_REQUEST, 'Phone is already exist. Try with different phone!')
+    if (alreadyExistPhone) {
+      throw new AppError(
+        StatusCodes.BAD_REQUEST,
+        'Phone is already exist. Try with different phone!',
+      )
     }
-
-    
 
     const totalAdmin = await Admin.countDocuments({}).exec()
 
@@ -263,7 +283,6 @@ const getSingleUserById = async (id: string) => {
   const user = await User.findById(id).select('-__v')
   return user
 }
-
 
 export const userServices = {
   insertStudentToDb,

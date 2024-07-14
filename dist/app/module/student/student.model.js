@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Student = void 0;
+/* eslint-disable @typescript-eslint/no-explicit-any */
 const mongoose_1 = require("mongoose");
 // Define the TGuardian schema
 const GuardianSchema = new mongoose_1.Schema({
@@ -57,9 +58,9 @@ const StudentSchema = new mongoose_1.Schema({
     profileImg: { type: String, required: true },
     gender: { type: String, enum: ['male', 'female', 'other'], required: true },
     dateOfBirth: { type: Date, required: true },
-    email: { type: String, required: true, unique: true },
-    phone: { type: String, required: true, unique: true },
-    nid: { type: String, required: true, unique: true },
+    email: { type: String, required: true },
+    phone: { type: String, required: true },
+    nid: { type: String, required: true },
     presentAddress: { type: String, required: true },
     permanentAddress: { type: String, required: true },
     guardian: { type: GuardianSchema, required: true },
