@@ -7,7 +7,7 @@ const router = Router()
 
 router.post('/login', zodValidateHandler(authZodSchema), authControllers.login)
 router.post('/forget-password')
-router.post('/refresh-token')
+router.post('/refresh-token', authControllers.refreshToken)
 
 
 export {router as authRouter}

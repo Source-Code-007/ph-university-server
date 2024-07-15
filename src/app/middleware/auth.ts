@@ -19,14 +19,20 @@ const auth = (...requiredRoles: TUserRole[]) => {
       throw new AppError(StatusCodes.UNAUTHORIZED, 'You are not authorized!')
     }
 
-    const decoded = jwt.verify(
-      bearerToken,
-      process.env.JWT_PRIVATE_KEY as string,
-    ) as JwtPayload
+    let decoded
+    try {
+      decoded = jwt.verify(
+        bearerToken,
+        process.env.JWT_ACCESS_SECRET as string,
+      ) as JwtPayload
+    } catch (e) {
+      throw new AppError(StatusCodes.UNAUTHORIZED, 'You are not authorized!')
+    }
 
     const { id, role } = decoded
 
-    const user = await User.findOne({id})
+
+    const user = await User.findOne({ id })
 
     if (!user) {
       throw new AppError(StatusCodes.UNAUTHORIZED, 'This user is not found!')
@@ -38,7 +44,7 @@ const auth = (...requiredRoles: TUserRole[]) => {
       throw new AppError(StatusCodes.UNAUTHORIZED, 'This user is deleted!')
     }
 
-    // checking if the user is blocked
+    // checking if the user is not active
     const userStatus = user?.status
 
     if (userStatus === 'inactive') {

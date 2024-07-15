@@ -7,16 +7,26 @@ import {
   notFoundErrHandler,
 } from './app/middleware/errHandler'
 import router from './app/routes'
+import cookieParser from 'cookie-parser'
 
 const app = express()
 
-
-app.get('/test', async(req, res) => {
+app.get('/test', async (req, res) => {
   res.send('Test route')
 })
 
 // parser
-app.use(cors({origin: '*', credentials: true}))
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true)
+      return callback(null, origin)
+    },
+    credentials: true,
+  }),
+)
+app.use(cookieParser())
 app.use(express.json())
 
 // Router
