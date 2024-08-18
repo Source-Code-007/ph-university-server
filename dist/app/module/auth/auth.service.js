@@ -23,14 +23,58 @@ const login = (loginInfo) => __awaiter(void 0, void 0, void 0, function* () {
     if (!user) {
         throw new appError_1.default(http_status_codes_1.StatusCodes.BAD_REQUEST, 'User not found!');
     }
-    const decryptPass = bcrypt_1.default.compare(loginInfo.password, user.password);
+    const decryptPass = yield bcrypt_1.default.compare(loginInfo.password, user.password);
     if (!decryptPass) {
         throw new appError_1.default(http_status_codes_1.StatusCodes.BAD_REQUEST, 'Incorrect password!');
     }
     const jwtPayload = { id: user.id, role: user.role };
-    const accessToken = jsonwebtoken_1.default.sign(jwtPayload, process.env.JWT_PRIVATE_KEY, {
-        expiresIn: '100d',
+    const accessToken = jsonwebtoken_1.default.sign(jwtPayload, process.env.JWT_ACCESS_SECRET, {
+        expiresIn: process.env.JWT_ACCESS_EXPIRES_IN,
     });
-    return { accessToken, data: user, needsPasswordChange: user === null || user === void 0 ? void 0 : user.needsPasswordChange };
+    const refreshToken = jsonwebtoken_1.default.sign(jwtPayload, process.env.JWT_REFRESH_SECRET, {
+        expiresIn: process.env.JWT_REFRESH_EXPIRES_IN,
+    });
+    return {
+        accessToken,
+        refreshToken,
+        data: user,
+        needsPasswordChange: user === null || user === void 0 ? void 0 : user.needsPasswordChange,
+    };
 });
-exports.authServices = { login };
+const refreshToken = (token) => __awaiter(void 0, void 0, void 0, function* () {
+    // checking if the given token is valid
+    let decoded;
+    try {
+        decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_REFRESH_SECRET);
+    }
+    catch (e) {
+        throw new appError_1.default(http_status_codes_1.StatusCodes.UNAUTHORIZED, 'You are not authorized!');
+    }
+    const { id } = decoded;
+    // checking if the user is exist
+    const user = yield user_model_1.default.findOne({ id });
+    if (!user) {
+        throw new appError_1.default(http_status_codes_1.StatusCodes.NOT_FOUND, 'This user is not found !');
+    }
+    // checking if the user is already deleted
+    const isDeleted = user === null || user === void 0 ? void 0 : user.isDeleted;
+    if (isDeleted) {
+        throw new appError_1.default(http_status_codes_1.StatusCodes.FORBIDDEN, 'This user is deleted !');
+    }
+    // checking if the user is not active
+    const userStatus = user === null || user === void 0 ? void 0 : user.status;
+    if (userStatus === 'inactive') {
+        throw new appError_1.default(http_status_codes_1.StatusCodes.FORBIDDEN, 'This user is not active!');
+    }
+    const jwtPayload = {
+        id: user.id,
+        role: user.role,
+    };
+    const accessToken = jsonwebtoken_1.default.sign(jwtPayload, process.env.JWT_ACCESS_SECRET, {
+        expiresIn: process.env.JWT_ACCESS_EXPIRES_IN,
+    });
+    return {
+        accessToken,
+    };
+});
+exports.authServices = { login, refreshToken };

@@ -17,6 +17,8 @@ const http_status_codes_1 = require("http-status-codes");
 const appError_1 = __importDefault(require("../../errors/appError"));
 const academicFaculty_model_1 = __importDefault(require("../academicFaculty/academicFaculty.model"));
 const academicDepartment_model_1 = __importDefault(require("./academicDepartment.model"));
+const QueryBuilder_1 = __importDefault(require("../../builder/QueryBuilder"));
+const academicDepartment_constant_1 = require("./academicDepartment.constant");
 const insertAcademicDepartmentToDb = (academicDepartmentData) => __awaiter(void 0, void 0, void 0, function* () {
     const isExistAcademicFaculty = yield academicFaculty_model_1.default.findById(academicDepartmentData === null || academicDepartmentData === void 0 ? void 0 : academicDepartmentData.academicFaculty);
     if (!isExistAcademicFaculty) {
@@ -25,12 +27,30 @@ const insertAcademicDepartmentToDb = (academicDepartmentData) => __awaiter(void 
     const academicDepartment = yield academicDepartment_model_1.default.create(academicDepartmentData);
     return academicDepartment;
 });
-const getAllAcademicDepartments = () => __awaiter(void 0, void 0, void 0, function* () {
-    const academicDepartments = yield academicDepartment_model_1.default.find({}).select('-__v').populate('academicFaculty', '_id, name');
-    return academicDepartments;
+const getAllAcademicDepartments = (query) => __awaiter(void 0, void 0, void 0, function* () {
+    const academicDepartmentQuery = new QueryBuilder_1.default(academicDepartment_model_1.default.find(query), query)
+        .searchQuery(academicDepartment_constant_1.academicDepartmentSearchableFields)
+        .filterQuery()
+        .paginateQuery()
+        .sortQuery()
+        .fieldFilteringQuery()
+        .populateQuery([
+        {
+            path: 'academicFaculty',
+            select: '_id name',
+        },
+    ]);
+    const result = yield academicDepartmentQuery.queryModel;
+    yield academicDepartment_model_1.default.find({})
+        .select('-__v')
+        .populate('academicFaculty', '_id, name');
+    const total = yield academicDepartment_model_1.default.countDocuments({});
+    return { data: result, total };
 });
 const getSingleAcademicDepartmentById = (id) => __awaiter(void 0, void 0, void 0, function* () {
-    const academicDepartment = yield academicDepartment_model_1.default.findById(id).select('-__v').populate('academicFaculty', '_id, name');
+    const academicDepartment = yield academicDepartment_model_1.default.findById(id)
+        .select('-__v')
+        .populate('academicFaculty', '_id, name');
     return academicDepartment;
 });
 const deleteAcademicDepartmentById = (id) => __awaiter(void 0, void 0, void 0, function* () {

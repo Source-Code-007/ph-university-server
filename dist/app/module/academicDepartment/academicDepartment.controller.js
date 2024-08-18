@@ -27,16 +27,22 @@ const insertAcademicDepartment = (0, catchAsync_1.default)((req, res) => __await
     });
 }));
 const getAllAcademicDepartments = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const academicDepartments = yield academicDepartment_service_1.academicDepartmentServices.getAllAcademicDepartments();
+    var _a, _b;
+    const { data, total } = yield academicDepartment_service_1.academicDepartmentServices.getAllAcademicDepartments(req.query);
+    const page = ((_a = req.query) === null || _a === void 0 ? void 0 : _a.page) ? Number(req.query.page) : 1;
+    const limit = ((_b = req.query) === null || _b === void 0 ? void 0 : _b.limit) ? Number(req.query.limit) : 10;
+    const totalPages = Math.ceil(total / limit);
+    console.log({ total, page, totalPages, limit }, '{ total, page, totalPages, limit }');
     (0, sendResponse_1.default)(res, http_status_codes_1.StatusCodes.OK, {
         success: true,
         message: 'Academic departments are retrieved successfully!',
-        data: academicDepartments,
+        data,
+        meta: { total, page, totalPages, limit },
     });
 }));
 const getAcademicDepartmentById = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    const academicDepartment = yield academicDepartment_service_1.academicDepartmentServices.getSingleAcademicDepartmentById((_a = req.params) === null || _a === void 0 ? void 0 : _a.id);
+    var _c;
+    const academicDepartment = yield academicDepartment_service_1.academicDepartmentServices.getSingleAcademicDepartmentById((_c = req.params) === null || _c === void 0 ? void 0 : _c.id);
     if (!academicDepartment) {
         throw new appError_1.default(http_status_codes_1.StatusCodes.NOT_FOUND, 'Academic department not found!');
     }
@@ -58,8 +64,8 @@ const deleteAcademicDepartmentById = (0, catchAsync_1.default)((req, res) => __a
     });
 }));
 const updateAcademicDepartmentById = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _b;
-    const academicDepartment = yield academicDepartment_service_1.academicDepartmentServices.updateAcademicDepartmentById((_b = req.params) === null || _b === void 0 ? void 0 : _b.id, req.body);
+    var _d;
+    const academicDepartment = yield academicDepartment_service_1.academicDepartmentServices.updateAcademicDepartmentById((_d = req.params) === null || _d === void 0 ? void 0 : _d.id, req.body);
     if (!academicDepartment) {
         throw new appError_1.default(http_status_codes_1.StatusCodes.NOT_FOUND, 'Academic department not found!');
     }

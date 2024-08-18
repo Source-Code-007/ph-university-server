@@ -17,12 +17,29 @@ const http_status_codes_1 = require("http-status-codes");
 const catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const auth_service_1 = require("./auth.service");
+const appError_1 = __importDefault(require("../../errors/appError"));
 const login = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { accessToken, needsPasswordChange } = yield auth_service_1.authServices.login(req.body);
+    const { accessToken, refreshToken, needsPasswordChange } = yield auth_service_1.authServices.login(req.body);
+    res.cookie('refreshToken', refreshToken, {
+        secure: process.env.NODE_ENV === 'production',
+        httpOnly: true,
+    });
     (0, sendResponse_1.default)(res, http_status_codes_1.StatusCodes.OK, {
         success: true,
         message: 'User is logged in successfully',
         data: { accessToken, needsPasswordChange },
     });
 }));
-exports.authControllers = { login };
+const refreshToken = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { refreshToken } = req.cookies || {};
+    if (!refreshToken) {
+        throw new appError_1.default(http_status_codes_1.StatusCodes.BAD_REQUEST, 'Refresh token is required');
+    }
+    const result = yield auth_service_1.authServices.refreshToken(refreshToken);
+    (0, sendResponse_1.default)(res, http_status_codes_1.StatusCodes.OK, {
+        success: true,
+        message: 'Access token is retrieved successfully',
+        data: result,
+    });
+}));
+exports.authControllers = { login, refreshToken };

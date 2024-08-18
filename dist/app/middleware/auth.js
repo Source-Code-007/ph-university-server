@@ -28,7 +28,13 @@ const auth = (...requiredRoles) => {
         if (!bearerToken) {
             throw new appError_1.default(http_status_codes_1.StatusCodes.UNAUTHORIZED, 'You are not authorized!');
         }
-        const decoded = jsonwebtoken_1.default.verify(bearerToken, process.env.JWT_PRIVATE_KEY);
+        let decoded;
+        try {
+            decoded = jsonwebtoken_1.default.verify(bearerToken, process.env.JWT_ACCESS_SECRET);
+        }
+        catch (e) {
+            throw new appError_1.default(http_status_codes_1.StatusCodes.UNAUTHORIZED, 'You are not authorized!');
+        }
         const { id, role } = decoded;
         const user = yield user_model_1.default.findOne({ id });
         if (!user) {
@@ -38,7 +44,7 @@ const auth = (...requiredRoles) => {
         if (isDeleted) {
             throw new appError_1.default(http_status_codes_1.StatusCodes.UNAUTHORIZED, 'This user is deleted!');
         }
-        // checking if the user is blocked
+        // checking if the user is not active
         const userStatus = user === null || user === void 0 ? void 0 : user.status;
         if (userStatus === 'inactive') {
             throw new appError_1.default(http_status_codes_1.StatusCodes.FORBIDDEN, 'This user is not active!');
