@@ -7,7 +7,7 @@ const sendResponse = (
     success: boolean
     message: string
     data: any
-    meta?: { total: number; page: number; totalPages: number; limit: number }
+    meta?: { total: number; page: number; totalPage: number; limit: number }
   },
 ) => {
   res.status(statusCode).send({

@@ -24,10 +24,10 @@ const insertAcademicDepartmentToDb = async (
 }
 
 const getAllAcademicDepartments = async (query: Record<string, unknown>) => {
-  const academicDepartmentQuery = new QueryBuilder(
-    AcademicDepartment.find(query),
-    query,
-  )
+  const academicDepartmentQuery = new QueryBuilder(AcademicDepartment.find(), {
+    ...query,
+    sort: `${query.sort} isDeleted`,
+  })
     .searchQuery(academicDepartmentSearchableFields)
     .filterQuery()
     .paginateQuery()
@@ -42,10 +42,9 @@ const getAllAcademicDepartments = async (query: Record<string, unknown>) => {
 
   const result = await academicDepartmentQuery.queryModel
 
-  await AcademicDepartment.find({})
-    .select('-__v')
-    .populate('academicFaculty', '_id, name')
-  const total = await AcademicDepartment.countDocuments({})
+  const total = await AcademicDepartment.countDocuments(
+    academicDepartmentQuery.queryModel.getFilter(),
+  )
   return { data: result, total }
 }
 

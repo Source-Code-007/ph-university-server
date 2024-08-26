@@ -23,13 +23,13 @@ const getAllAcademicDepartments = catchAsync(async (req, res) => {
 
   const page = req.query?.page ? Number(req.query.page) : 1
   const limit = req.query?.limit ? Number(req.query.limit) : 10
-  const totalPages = Math.ceil(total / limit)
+  const totalPage = Math.ceil(total / limit)
 
   sendResponse(res, StatusCodes.OK, {
     success: true,
-    message: 'Academic departments are retrieved successfully xx!',
+    message: 'Academic departments are retrieved successfully!',
     data,
-    meta: { total, page, totalPages, limit },
+    meta: { total, page, totalPage, limit },
   })
 })
 

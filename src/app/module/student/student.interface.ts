@@ -11,6 +11,7 @@ type TName = {
   middleName?: string
   lastName: string
 }
+type TGender = 'male' | 'female' | 'other'
 type TBloodGroup = 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-'
 type TAcadmicInfo = {
   department: Types.ObjectId //FK
@@ -29,7 +30,7 @@ type TStudent = {
   academicInfo: TAcadmicInfo
   name: TName
   profileImg: string
-  gender: string
+  gender: TGender
   dateOfBirth: Date
   email: string
   phone: string

@@ -7,8 +7,8 @@ const createStudentZodSchema = z.object({
     lastName: z.string(),
   }),
 
-  profileImg: z.string(),
-  gender: z.string(),
+  profileImg: z.string().optional(),
+  gender: z.enum(['male', 'female', 'other']),
   dateOfBirth: z.string(),
   email: z.string(),
   phone: z.string(),
@@ -26,7 +26,6 @@ const createStudentZodSchema = z.object({
     department: z.string(),
     // roll: z.number().int().max(Number(process.env.MAX_STUDENT_PER_BATCH), 'Roll number exceeds the maximum limit.').min(1, 'Roll number must be greater than 0.'),
     batch: z.string(),
-    admissionDate: z.string(),
   }),
 })
 
@@ -38,7 +37,6 @@ const updateStudentZodSchema = z.object({
       lastName: z.string().optional(),
     })
     .optional(),
-
   profileImg: z.string().optional(),
   gender: z.enum(['male', 'female', 'other']).optional(),
   dateOfBirth: z.string().optional(),

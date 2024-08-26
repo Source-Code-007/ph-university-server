@@ -2,6 +2,8 @@ import { StatusCodes } from 'http-status-codes'
 import AppError from '../../errors/appError'
 import Batch from './batch.model'
 import AcademicDepartment from '../academicDepartment/academicDepartment.model'
+import QueryBuilder from '../../builder/QueryBuilder'
+import { batchSearchableFields } from './batch.constant'
 
 const insertBatchToDb = async (departmentId: string) => {
   const department = await AcademicDepartment.findById(departmentId)
@@ -23,7 +25,7 @@ const insertBatchToDb = async (departmentId: string) => {
   ) {
     throw new AppError(
       StatusCodes.BAD_REQUEST,
-      
+
       `Last batch-${totalBatch} of ${department?.name} is not full! There are ${Number(process.env.MAX_STUDENT_PER_BATCH) - lastBatch?.totalStudent} seats left!`,
     )
   }
@@ -36,18 +38,25 @@ const insertBatchToDb = async (departmentId: string) => {
   return batch
 }
 
-const getAllBatch = async () => {
-  const batch = await Batch.find({})
-    .select('-__v')
-    .populate({
-      path: 'department',
-      select: '-createdAt -updatedAt -__v',
-      populate: {
-        path: 'academicFaculty',
-        select: '-createdAt -updatedAt -__v',
+const getAllBatch = async (query: Record<string, unknown>) => {
+  const batchQuery = new QueryBuilder(Batch.find(), {
+    ...query,
+    sort: `${query.sort} isDeleted`,
+  })
+    .searchQuery(batchSearchableFields)
+    .filterQuery()
+    .sortQuery()
+    .paginateQuery()
+    .fieldFilteringQuery()
+    .populateQuery([
+      {
+        path: 'department',
       },
-    })
-  return batch
+    ])
+
+  const result = await batchQuery?.queryModel
+  const total = await Batch.countDocuments(batchQuery?.queryModel.getFilter())
+  return { data: result, total }
 }
 
 const getSingleBatchById = async (id: string) => {

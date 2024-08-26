@@ -1,6 +1,6 @@
-
 type TAcademicFaculty = {
-    name: string,
+  name: string
+  isDeleted: boolean
 }
 
-export {TAcademicFaculty}
+export { TAcademicFaculty }

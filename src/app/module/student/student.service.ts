@@ -53,7 +53,10 @@ const getAllStudent = async (query: Record<string, unknown>) => {
 
   // return paginateQuery
 
-  const studentQuery = new QueryBuilder(Student.find(), query)
+  const studentQuery = new QueryBuilder(Student.find(), {
+    ...query,
+    sort: `${query.sort} isDeleted`,
+  })
     .searchQuery(studentSearchableFields)
     .filterQuery()
     .sortQuery()
@@ -76,7 +79,10 @@ const getAllStudent = async (query: Record<string, unknown>) => {
     ])
 
   const result = await studentQuery?.queryModel
-  return result
+  const total = await Student.countDocuments(
+    studentQuery.queryModel.getFilter(),
+  )
+  return { data: result, total }
 }
 
 const getStudentById = async (id: string) => {
@@ -129,8 +135,18 @@ const updateStudentById = async (id: string, payload: Partial<TStudent>) => {
   return student
 }
 
+const deleteStudentById = async (id: string) => {
+  const student = await Student.findByIdAndUpdate(
+    id,
+    { isDeleted: true },
+    { new: true },
+  ).select('-__v')
+  return student
+}
+
 export const studentServices = {
   getAllStudent,
   getStudentById,
   updateStudentById,
+  deleteStudentById,
 }
