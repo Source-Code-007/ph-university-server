@@ -29,16 +29,21 @@ const insertBatch = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, vo
     });
 }));
 const getAllBatches = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const batches = yield batch_service_1.batchServices.getAllBatch();
+    var _b, _c;
+    const { data, total } = yield batch_service_1.batchServices.getAllBatch(req.query);
+    const page = ((_b = req.query) === null || _b === void 0 ? void 0 : _b.page) ? Number(req.query.page) : 1;
+    const limit = ((_c = req.query) === null || _c === void 0 ? void 0 : _c.limit) ? Number(req.query.limit) : 10;
+    const totalPage = Math.ceil(total / limit);
     (0, sendResponse_1.default)(res, http_status_codes_1.StatusCodes.OK, {
         success: true,
         message: 'Batches are retrieved successfully!',
-        data: batches,
+        data,
+        meta: { total, page, totalPage, limit },
     });
 }));
 const getBatchById = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _b;
-    const batch = yield batch_service_1.batchServices.getSingleBatchById((_b = req.params) === null || _b === void 0 ? void 0 : _b.id);
+    var _d;
+    const batch = yield batch_service_1.batchServices.getSingleBatchById((_d = req.params) === null || _d === void 0 ? void 0 : _d.id);
     if (!batch) {
         throw new appError_1.default(http_status_codes_1.StatusCodes.NOT_FOUND, 'Batch not found!');
     }

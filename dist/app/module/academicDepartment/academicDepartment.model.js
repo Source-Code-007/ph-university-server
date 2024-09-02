@@ -11,6 +11,7 @@ const academicDepartmentSchema = new mongoose_1.Schema({
         ref: 'AcademicFaculty',
         required: true,
     },
+    isDeleted: { type: Boolean, default: false },
 }, { timestamps: true });
 const AcademicDepartment = (0, mongoose_1.model)('AcademicDepartment', academicDepartmentSchema);
 exports.default = AcademicDepartment;

@@ -28,7 +28,7 @@ const insertAcademicDepartmentToDb = (academicDepartmentData) => __awaiter(void 
     return academicDepartment;
 });
 const getAllAcademicDepartments = (query) => __awaiter(void 0, void 0, void 0, function* () {
-    const academicDepartmentQuery = new QueryBuilder_1.default(academicDepartment_model_1.default.find(query), query)
+    const academicDepartmentQuery = new QueryBuilder_1.default(academicDepartment_model_1.default.find(), Object.assign(Object.assign({}, query), { sort: `${query.sort} isDeleted` }))
         .searchQuery(academicDepartment_constant_1.academicDepartmentSearchableFields)
         .filterQuery()
         .paginateQuery()
@@ -41,10 +41,7 @@ const getAllAcademicDepartments = (query) => __awaiter(void 0, void 0, void 0, f
         },
     ]);
     const result = yield academicDepartmentQuery.queryModel;
-    yield academicDepartment_model_1.default.find({})
-        .select('-__v')
-        .populate('academicFaculty', '_id, name');
-    const total = yield academicDepartment_model_1.default.countDocuments({});
+    const total = yield academicDepartment_model_1.default.countDocuments(academicDepartmentQuery.queryModel.getFilter());
     return { data: result, total };
 });
 const getSingleAcademicDepartmentById = (id) => __awaiter(void 0, void 0, void 0, function* () {

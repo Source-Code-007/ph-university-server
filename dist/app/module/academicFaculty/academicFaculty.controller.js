@@ -27,16 +27,21 @@ const insertAcademicFaculty = (0, catchAsync_1.default)((req, res) => __awaiter(
     });
 }));
 const getAllAcademicFaculties = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const academicFaculties = yield academicFaculty_service_1.academicFacultyServices.getAllAcademicFaculties();
+    var _a, _b;
+    const { data, total } = yield academicFaculty_service_1.academicFacultyServices.getAllAcademicFaculties(req.query);
+    const page = ((_a = req.query) === null || _a === void 0 ? void 0 : _a.page) ? Number(req.query.page) : 1;
+    const limit = ((_b = req.query) === null || _b === void 0 ? void 0 : _b.limit) ? Number(req.query.limit) : 10;
+    const totalPage = Math.ceil(total / limit);
     (0, sendResponse_1.default)(res, http_status_codes_1.StatusCodes.OK, {
         success: true,
         message: 'Academic faculties are retrieved successfully!',
-        data: academicFaculties,
+        data,
+        meta: { total, page, totalPage, limit },
     });
 }));
 const getAcademicFacultyById = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    const academicFaculty = yield academicFaculty_service_1.academicFacultyServices.getSingleAcademicFacultyById((_a = req.params) === null || _a === void 0 ? void 0 : _a.id);
+    var _c;
+    const academicFaculty = yield academicFaculty_service_1.academicFacultyServices.getSingleAcademicFacultyById((_c = req.params) === null || _c === void 0 ? void 0 : _c.id);
     if (!academicFaculty) {
         throw new appError_1.default(http_status_codes_1.StatusCodes.NOT_FOUND, 'Academic faculty not found!');
     }
@@ -58,8 +63,8 @@ const deleteAcademicFacultyById = (0, catchAsync_1.default)((req, res) => __awai
     });
 }));
 const updateAcademicFacultyById = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _b;
-    const academicFaculty = yield academicFaculty_service_1.academicFacultyServices.updateAcademicFacultyById((_b = req.params) === null || _b === void 0 ? void 0 : _b.id, req.body);
+    var _d;
+    const academicFaculty = yield academicFaculty_service_1.academicFacultyServices.updateAcademicFacultyById((_d = req.params) === null || _d === void 0 ? void 0 : _d.id, req.body);
     if (!academicFaculty) {
         throw new appError_1.default(http_status_codes_1.StatusCodes.NOT_FOUND, 'Academic faculty not found!');
     }

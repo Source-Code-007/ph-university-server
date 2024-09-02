@@ -17,6 +17,8 @@ const http_status_codes_1 = require("http-status-codes");
 const appError_1 = __importDefault(require("../../errors/appError"));
 const batch_model_1 = __importDefault(require("./batch.model"));
 const academicDepartment_model_1 = __importDefault(require("../academicDepartment/academicDepartment.model"));
+const QueryBuilder_1 = __importDefault(require("../../builder/QueryBuilder"));
+const batch_constant_1 = require("./batch.constant");
 const insertBatchToDb = (departmentId) => __awaiter(void 0, void 0, void 0, function* () {
     const department = yield academicDepartment_model_1.default.findById(departmentId);
     // const isDeptExistInBatch = await Batch.findOne({department: departmentId})
@@ -41,18 +43,21 @@ const insertBatchToDb = (departmentId) => __awaiter(void 0, void 0, void 0, func
     });
     return batch;
 });
-const getAllBatch = () => __awaiter(void 0, void 0, void 0, function* () {
-    const batch = yield batch_model_1.default.find({})
-        .select('-__v')
-        .populate({
-        path: 'department',
-        select: '-createdAt -updatedAt -__v',
-        populate: {
-            path: 'academicFaculty',
-            select: '-createdAt -updatedAt -__v',
+const getAllBatch = (query) => __awaiter(void 0, void 0, void 0, function* () {
+    const batchQuery = new QueryBuilder_1.default(batch_model_1.default.find(), Object.assign(Object.assign({}, query), { sort: `${query.sort} isDeleted` }))
+        .searchQuery(batch_constant_1.batchSearchableFields)
+        .filterQuery()
+        .sortQuery()
+        .paginateQuery()
+        .fieldFilteringQuery()
+        .populateQuery([
+        {
+            path: 'department',
         },
-    });
-    return batch;
+    ]);
+    const result = yield (batchQuery === null || batchQuery === void 0 ? void 0 : batchQuery.queryModel);
+    const total = yield batch_model_1.default.countDocuments(batchQuery === null || batchQuery === void 0 ? void 0 : batchQuery.queryModel.getFilter());
+    return { data: result, total };
 });
 const getSingleBatchById = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const batch = yield batch_model_1.default.findById(id)

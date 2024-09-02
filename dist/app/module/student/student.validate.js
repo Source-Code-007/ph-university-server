@@ -8,8 +8,8 @@ const createStudentZodSchema = zod_1.z.object({
         middleName: zod_1.z.string().optional(),
         lastName: zod_1.z.string(),
     }),
-    profileImg: zod_1.z.string(),
-    gender: zod_1.z.string(),
+    profileImg: zod_1.z.string().optional(),
+    gender: zod_1.z.enum(['male', 'female', 'other']),
     dateOfBirth: zod_1.z.string(),
     email: zod_1.z.string(),
     phone: zod_1.z.string(),
@@ -27,7 +27,6 @@ const createStudentZodSchema = zod_1.z.object({
         department: zod_1.z.string(),
         // roll: z.number().int().max(Number(process.env.MAX_STUDENT_PER_BATCH), 'Roll number exceeds the maximum limit.').min(1, 'Roll number must be greater than 0.'),
         batch: zod_1.z.string(),
-        admissionDate: zod_1.z.string(),
     }),
 });
 exports.createStudentZodSchema = createStudentZodSchema;

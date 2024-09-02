@@ -13,14 +13,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.academicFacultyServices = void 0;
+const QueryBuilder_1 = __importDefault(require("../../builder/QueryBuilder"));
+const academicFaculty_constant_1 = require("./academicFaculty.constant");
 const academicFaculty_model_1 = __importDefault(require("./academicFaculty.model"));
 const insertAcademicFacultyToDb = (academicFacultyData) => __awaiter(void 0, void 0, void 0, function* () {
     const academicFaculty = yield academicFaculty_model_1.default.create(academicFacultyData);
     return academicFaculty;
 });
-const getAllAcademicFaculties = () => __awaiter(void 0, void 0, void 0, function* () {
-    const academicFaculties = yield academicFaculty_model_1.default.find({}).select('-__v');
-    return academicFaculties;
+const getAllAcademicFaculties = (query) => __awaiter(void 0, void 0, void 0, function* () {
+    const academicFacultyQuery = new QueryBuilder_1.default(academicFaculty_model_1.default.find(), Object.assign(Object.assign({}, query), { sort: `${query.sort} isDeleted` }))
+        .searchQuery(academicFaculty_constant_1.academicFacultySearchableFields)
+        .filterQuery()
+        .paginateQuery()
+        .sortQuery()
+        .fieldFilteringQuery()
+        .populateQuery([]);
+    const result = yield academicFacultyQuery.queryModel;
+    const total = yield academicFaculty_model_1.default.countDocuments(academicFacultyQuery.queryModel.getFilter());
+    return { data: result, total };
 });
 const getSingleAcademicFacultyById = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const academicFaculty = yield academicFaculty_model_1.default.findById(id).select('-__v');

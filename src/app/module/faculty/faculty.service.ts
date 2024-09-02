@@ -1,11 +1,27 @@
 import QueryBuilder from '../../builder/QueryBuilder'
+import { facultySearchableFields } from './faculty.constant'
 import { TFaculty } from './faculty.interface'
 import { Faculty } from './faculty.model'
 
-const getAllFaculty = async (query:Record<string, unknown>) => {
-
-  const facultyQuery = new QueryBuilder(Faculty.find({}), query).searchQuery(['designation']).filterQuery().sortQuery().fieldFilteringQuery().paginateQuery().populateQuery([{path: 'user', select: '-createdAt -updatedAt -__v'}, {path: 'academicDepartment', select: '-createdAt -updatedAt -__v'}])
-  const faculty =  await facultyQuery.queryModel
+const getAllFaculty = async (query: Record<string, unknown>) => {
+  const facultyQuery = new QueryBuilder(Faculty.find({}), query)
+    .searchQuery(facultySearchableFields)
+    .filterQuery()
+    .sortQuery()
+    .fieldFilteringQuery()
+    .paginateQuery()
+    .populateQuery([
+      { path: 'user', select: '-createdAt -updatedAt -__v' },
+      {
+        path: 'academicDepartment',
+        select: '-createdAt -updatedAt -__v',
+        populate: {
+          path: 'academicFaculty',
+          select: '-createdAt -updatedAt -__v',
+        },
+      },
+    ])
+  const faculty = await facultyQuery.queryModel
   return faculty
 }
 

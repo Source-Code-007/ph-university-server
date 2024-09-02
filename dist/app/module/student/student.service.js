@@ -67,7 +67,7 @@ const getAllStudent = (query) => __awaiter(void 0, void 0, void 0, function* () 
     // const skip = query?.page ? (Number(query?.page) - 1) * Number(limit) : 1
     // const paginateQuery = sortQuery.limit(Number(limit)).skip(skip)
     // return paginateQuery
-    const studentQuery = new QueryBuilder_1.default(student_model_1.Student.find(), query)
+    const studentQuery = new QueryBuilder_1.default(student_model_1.Student.find(), Object.assign(Object.assign({}, query), { sort: `${query.sort} isDeleted` }))
         .searchQuery(students_constant_1.studentSearchableFields)
         .filterQuery()
         .sortQuery()
@@ -89,7 +89,8 @@ const getAllStudent = (query) => __awaiter(void 0, void 0, void 0, function* () 
         },
     ]);
     const result = yield (studentQuery === null || studentQuery === void 0 ? void 0 : studentQuery.queryModel);
-    return result;
+    const total = yield student_model_1.Student.countDocuments(studentQuery.queryModel.getFilter());
+    return { data: result, total };
 });
 const getStudentById = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const student = yield student_model_1.Student.findById(id)
@@ -135,8 +136,13 @@ const updateStudentById = (id, payload) => __awaiter(void 0, void 0, void 0, fun
         .populate('academicInfo.batch');
     return student;
 });
+const deleteStudentById = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const student = yield student_model_1.Student.findByIdAndUpdate(id, { isDeleted: true }, { new: true }).select('-__v');
+    return student;
+});
 exports.studentServices = {
     getAllStudent,
     getStudentById,
     updateStudentById,
+    deleteStudentById,
 };

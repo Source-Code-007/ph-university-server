@@ -90,7 +90,7 @@ const insertStudentToDb = async (payload: TStudent & TUser) => {
 
     const userData: Partial<TUser> = {
       id: regCode,
-      password: payload.password,
+      password: payload.password || 'student123',
       needsPasswordChange: true,
       role: 'student',
     }

@@ -31,13 +31,12 @@ const getAllAcademicDepartments = (0, catchAsync_1.default)((req, res) => __awai
     const { data, total } = yield academicDepartment_service_1.academicDepartmentServices.getAllAcademicDepartments(req.query);
     const page = ((_a = req.query) === null || _a === void 0 ? void 0 : _a.page) ? Number(req.query.page) : 1;
     const limit = ((_b = req.query) === null || _b === void 0 ? void 0 : _b.limit) ? Number(req.query.limit) : 10;
-    const totalPages = Math.ceil(total / limit);
-    console.log({ total, page, totalPages, limit }, '{ total, page, totalPages, limit }');
+    const totalPage = Math.ceil(total / limit);
     (0, sendResponse_1.default)(res, http_status_codes_1.StatusCodes.OK, {
         success: true,
         message: 'Academic departments are retrieved successfully!',
         data,
-        meta: { total, page, totalPages, limit },
+        meta: { total, page, totalPage, limit },
     });
 }));
 const getAcademicDepartmentById = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
