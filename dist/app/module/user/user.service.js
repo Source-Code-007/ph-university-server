@@ -77,7 +77,7 @@ const insertStudentToDb = (payload) => __awaiter(void 0, void 0, void 0, functio
         yield academicDepartment.save({ session });
         const userData = {
             id: regCode,
-            password: payload.password,
+            password: payload.password || '1234@@aA',
             needsPasswordChange: true,
             role: 'student',
         };
@@ -131,7 +131,7 @@ const insertFacultyToDb = (payload) => __awaiter(void 0, void 0, void 0, functio
         yield department.save({ session });
         const userData = {
             id,
-            password: payload.password,
+            password: payload.password || '1234@@aA',
             role: 'faculty',
         };
         // Save user
@@ -178,7 +178,7 @@ const insertAdminToDb = (payload) => __awaiter(void 0, void 0, void 0, function*
         const id = `A-${slNo.toString().padStart(4, '0')}`;
         const userData = {
             id,
-            password: payload.password,
+            password: payload.password || '1234@@aA',
             role: 'admin',
         };
         // Save user

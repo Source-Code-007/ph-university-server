@@ -41,7 +41,7 @@ const insertBatchToDb = async (departmentId: string) => {
 const getAllBatch = async (query: Record<string, unknown>) => {
   const batchQuery = new QueryBuilder(Batch.find(), {
     ...query,
-    sort: `${query.sort} isDeleted`,
+    sort: `${query.sort} totalStudent`,
   })
     .searchQuery(batchSearchableFields)
     .filterQuery()

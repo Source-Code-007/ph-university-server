@@ -90,7 +90,7 @@ const insertStudentToDb = async (payload: TStudent & TUser) => {
 
     const userData: Partial<TUser> = {
       id: regCode,
-      password: payload.password || 'student123',
+      password: payload.password || '1234@@aA',
       needsPasswordChange: true,
       role: 'student',
     }
@@ -171,7 +171,7 @@ const insertFacultyToDb = async (payload: TFaculty & TUser) => {
 
     const userData: Partial<TUser> = {
       id,
-      password: payload.password,
+      password: payload.password || '1234@@aA',
       role: 'faculty',
     }
     // Save user
@@ -240,7 +240,7 @@ const insertAdminToDb = async (payload: TAdmin & TUser) => {
 
     const userData: Partial<TUser> = {
       id,
-      password: payload.password,
+      password: payload.password || '1234@@aA',
       role: 'admin',
     }
 

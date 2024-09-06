@@ -13,7 +13,7 @@ const createAdminZodSchema = z.object({
   phone: z.string(),
   nid: z.string(),
   bloodGroup: z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']),
-  profileImg: z.string(),
+  profileImg: z.string().optional(),
   isDeleted: z.boolean().optional(),
 })
 

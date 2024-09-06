@@ -57,7 +57,6 @@ const StudentSchema = new mongoose_1.Schema({
     name: { type: NameSchema, required: true },
     profileImg: {
         type: String,
-        required: true,
         default: function () {
             return this.gender === 'male'
                 ? 'https://e7.pngegg.com/pngimages/348/800/png-clipart-man-wearing-blue-shirt-illustration-computer-icons-avatar-user-login-avatar-blue-child.png'

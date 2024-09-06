@@ -25,7 +25,16 @@ const AdminSchema = new Schema<TAdmin>({
     default: 'admin',
   },
   name: { type: NameSchema, required: true },
-  profileImg: { type: String, required: true },
+  profileImg: {
+    type: String,
+    default: function () {
+      return this.gender === 'male'
+        ? 'https://e7.pngegg.com/pngimages/348/800/png-clipart-man-wearing-blue-shirt-illustration-computer-icons-avatar-user-login-avatar-blue-child.png'
+        : this.gender === 'female'
+          ? 'https://cdn3.iconfinder.com/data/icons/business-avatar-1/512/11_avatar-512.png'
+          : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbxbloQR1_FBnDB7WUPxwRB3geLh77OCHBnA&s'
+    },
+  },
   gender: { type: String, enum: ['male', 'female', 'other'], required: true },
   dateOfBirth: { type: Date, required: true },
   email: { type: String, required: true },

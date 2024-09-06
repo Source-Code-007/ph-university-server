@@ -17,7 +17,7 @@ const createFacultyZodSchema = zod_1.z.object({
     bloodGroup: zod_1.z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']),
     presentAddress: zod_1.z.string(),
     permanentAddress: zod_1.z.string(),
-    profileImg: zod_1.z.string(),
+    profileImg: zod_1.z.string().optional(),
     academicDepartment: zod_1.z.string(),
     isDeleted: zod_1.z.boolean().optional(),
 });

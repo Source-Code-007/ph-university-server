@@ -15,7 +15,7 @@ const createAdminZodSchema = zod_1.z.object({
     phone: zod_1.z.string(),
     nid: zod_1.z.string(),
     bloodGroup: zod_1.z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']),
-    profileImg: zod_1.z.string(),
+    profileImg: zod_1.z.string().optional(),
     isDeleted: zod_1.z.boolean().optional(),
 });
 exports.createAdminZodSchema = createAdminZodSchema;

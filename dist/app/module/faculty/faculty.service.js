@@ -25,9 +25,26 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.facultyServices = void 0;
 const QueryBuilder_1 = __importDefault(require("../../builder/QueryBuilder"));
+const faculty_constant_1 = require("./faculty.constant");
 const faculty_model_1 = require("./faculty.model");
 const getAllFaculty = (query) => __awaiter(void 0, void 0, void 0, function* () {
-    const facultyQuery = new QueryBuilder_1.default(faculty_model_1.Faculty.find({}), query).searchQuery(['designation']).filterQuery().sortQuery().fieldFilteringQuery().paginateQuery().populateQuery([{ path: 'user', select: '-createdAt -updatedAt -__v' }, { path: 'academicDepartment', select: '-createdAt -updatedAt -__v' }]);
+    const facultyQuery = new QueryBuilder_1.default(faculty_model_1.Faculty.find({}), query)
+        .searchQuery(faculty_constant_1.facultySearchableFields)
+        .filterQuery()
+        .sortQuery()
+        .fieldFilteringQuery()
+        .paginateQuery()
+        .populateQuery([
+        { path: 'user', select: '-createdAt -updatedAt -__v' },
+        {
+            path: 'academicDepartment',
+            select: '-createdAt -updatedAt -__v',
+            populate: {
+                path: 'academicFaculty',
+                select: '-createdAt -updatedAt -__v',
+            },
+        },
+    ]);
     const faculty = yield facultyQuery.queryModel;
     return faculty;
 });

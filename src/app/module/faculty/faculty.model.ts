@@ -1,5 +1,5 @@
-import { Schema, model } from "mongoose"
-import { TFaculty, TFacultyName } from "./faculty.interface"
+import { Schema, model } from 'mongoose'
+import { TFaculty, TFacultyName } from './faculty.interface'
 
 // Define the name schema
 const NameSchema = new Schema<TFacultyName>(
@@ -17,17 +17,31 @@ const FacultySchema = new Schema<TFaculty>({
   user: {
     type: Schema.Types.ObjectId,
     ref: 'User',
-    immutable:true
+    immutable: true,
   },
-  academicDepartment: { type: Schema.Types.ObjectId, required: true, ref: 'AcademicDepartment', immutable:true },
+  academicDepartment: {
+    type: Schema.Types.ObjectId,
+    required: true,
+    ref: 'AcademicDepartment',
+    immutable: true,
+  },
   designation: { type: String, required: true },
   name: { type: NameSchema, required: true },
-  profileImg: { type: String, required: true },
-  gender: { type: String, enum:['male', 'female', 'other'], required: true },
+  profileImg: {
+    type: String,
+    default: function () {
+      return this.gender === 'male'
+        ? 'https://e7.pngegg.com/pngimages/348/800/png-clipart-man-wearing-blue-shirt-illustration-computer-icons-avatar-user-login-avatar-blue-child.png'
+        : this.gender === 'female'
+          ? 'https://cdn3.iconfinder.com/data/icons/business-avatar-1/512/11_avatar-512.png'
+          : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbxbloQR1_FBnDB7WUPxwRB3geLh77OCHBnA&s'
+    },
+  },
+  gender: { type: String, enum: ['male', 'female', 'other'], required: true },
   dateOfBirth: { type: Date, required: true },
-  email: { type: String, required: true, },
-  phone: { type: String, required: true, },
-  nid: { type: String, required: true, },
+  email: { type: String, required: true },
+  phone: { type: String, required: true },
+  nid: { type: String, required: true },
   presentAddress: { type: String, required: true },
   permanentAddress: { type: String, required: true },
   bloodGroup: {
