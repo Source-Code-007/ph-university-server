@@ -18,7 +18,12 @@ router.post(
   zodValidateHandler(authZodSchema.forgetPasswordZodSchema),
   authControllers.forgetPassword,
 )
-router.post('/reset-password', authControllers.resetPassword)
+router.post(
+  '/reset-password',
+  auth(USER_ROLE.ADMIN, USER_ROLE.FACULTY, USER_ROLE.STUDENT),
+  zodValidateHandler(authZodSchema.resetPasswordZodSchema),
+  authControllers.resetPassword,
+)
 router.patch(
   '/change-password',
   zodValidateHandler(authZodSchema.changePasswordZodSchema),

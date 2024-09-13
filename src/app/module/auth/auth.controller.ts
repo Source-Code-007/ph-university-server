@@ -37,15 +37,24 @@ const refreshToken = catchAsync(async (req, res) => {
 })
 
 const forgetPassword = catchAsync(async (req, res) => {
-  const result = await authServices.forgetPassword(req.query.id as string)
+  const result = await authServices.forgetPassword(req.body)
 
   sendResponse(res, StatusCodes.OK, {
     success: true,
-    message: 'Password reset link is generated successfully',
+    message:
+      'Reset your password within 10 minutes! Check your email for the reset link and also check the spam folder.',
     data: result,
   })
 })
-const resetPassword = catchAsync(async (req, res) => {})
+const resetPassword = catchAsync(async (req, res) => {
+  const result = await authServices.resetPassword(req.body)
+
+  sendResponse(res, StatusCodes.OK, {
+    success: true,
+    message: 'Password is reset successfully!',
+    data: result,
+  })
+})
 
 const changePassword = catchAsync(async (req, res) => {
   const user = await authServices.changePassword(

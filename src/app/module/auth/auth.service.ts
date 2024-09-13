@@ -1,9 +1,10 @@
 import { StatusCodes } from 'http-status-codes'
 import AppError from '../../errors/appError'
 import User from '../user/user.model'
-import { TLoginUser, TPasswordUpdate } from './auth.interface'
+import { TLoginUser, TPasswordUpdate, TResetPassword } from './auth.interface'
 import bcrypt from 'bcrypt'
 import jwt, { JwtPayload } from 'jsonwebtoken'
+import { sendEmail } from '../../utils/sendEmail'
 
 const login = async (loginInfo: TLoginUser) => {
   const user = await User.findOne({ id: loginInfo.id })
@@ -96,8 +97,66 @@ const refreshToken = async (token: string) => {
   }
 }
 
-const forgetPassword = async (id: string) => {}
-const resetPassword = async () => {}
+const forgetPassword = async (payload: Record<string, unknown>) => {
+  const user = await User.findOne({ id: payload.id })
+
+  if (!user) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'User not found!')
+  }
+  const jwtPayload = { id: user.id, role: user.role }
+
+  const accessToken = jwt.sign(
+    jwtPayload,
+    process.env.JWT_ACCESS_SECRET as string,
+    {
+      expiresIn: '10m' as string,
+    },
+  )
+  const resetLink = `${process.env.CLIENT_URL}/reset-password?id=${user.id}&token=${accessToken}`
+  await sendEmail({
+    toEmail: user.email,
+    subject: 'Reset your password for Pandit university!',
+    text: `You requested a password reset for your account. Please click the link below to reset your password:
+    ${resetLink} This link will expire in 10 minutes. If you did not request a password reset, please ignore this email.`,
+    html: `
+    <p>You requested a password reset for your account.</p>
+
+    <p>Please click the link below to reset your password:</p>
+
+ <div>
+    <a href="${resetLink}" style="background-color: #05668D; margin: 5px 0; cursor: pointer; padding: 10px 20px; border-radius: 5px; color: white; font-weight: bold; text-decoration: none; display: inline-block;">Reset Password</a>
+  </div>
+
+    <p>This link will expire in 10 minutes. If you did not request a password reset, please ignore this email.</p>
+    `,
+  })
+  return { resetLink }
+}
+const resetPassword = async (payload: TResetPassword) => {
+  const user = await User.findOne({ id: payload.id })
+
+  if (!user) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'User not found!')
+  }
+
+  const hashedPass = await bcrypt.hash(
+    payload.newPassword,
+    Number(process.env.SALT_ROUNDS),
+  )
+
+  const result = await User.findOneAndUpdate(
+    { id: payload.id },
+    { password: hashedPass, needsPasswordChange: false },
+    { new: true },
+  ).select('-password')
+  if (!result) {
+    throw new AppError(
+      StatusCodes.INTERNAL_SERVER_ERROR,
+      'Failed to update password.',
+    )
+  }
+  return result
+}
 
 const changePassword = async (
   userPayload: JwtPayload,

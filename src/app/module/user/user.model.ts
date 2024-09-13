@@ -6,6 +6,7 @@ import bcrypt from 'bcrypt'
 const UserSchema = new Schema<TUser>(
   {
     id: { type: String }, //FK
+    email: { type: String, unique: true }, //FK
     password: { type: String, required: [true, 'Password is required'] },
     needsPasswordChange: { type: Boolean, default: false },
     role: {
@@ -19,19 +20,22 @@ const UserSchema = new Schema<TUser>(
   { timestamps: true },
 )
 
-UserSchema.pre<TUser>('save', async function (next) {
-  try {
-    const hashPass = await bcrypt.hash(
-      this.password,
-      Number(process.env.SALT_ROUNDS),
-    )
+UserSchema.pre<TUser>(
+  'save',
+  async function (this: TUser, next: (err?: any) => void) {
+    try {
+      const hashPass = await bcrypt.hash(
+        this.password,
+        Number(process.env.SALT_ROUNDS),
+      )
 
-    this.password = hashPass
-    next()
-  } catch (e: any) {
-    next(e)
-  }
-})
+      this.password = hashPass
+      next()
+    } catch (e: any) {
+      next(e)
+    }
+  },
+)
 
 const User = model<TUser>('User', UserSchema)
 export default User

@@ -1,5 +1,6 @@
 type TUser = {
   id: string
+  email: string
   password: string
   needsPasswordChange: boolean
   role: 'admin' | 'faculty' | 'student'
