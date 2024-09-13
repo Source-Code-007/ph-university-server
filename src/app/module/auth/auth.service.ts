@@ -99,8 +99,11 @@ const refreshToken = async (token: string) => {
 const forgetPassword = async (id: string) => {}
 const resetPassword = async () => {}
 
-const changePassword = async (id: string, payload: TPasswordUpdate) => {
-  const user = await User.findOne({ id })
+const changePassword = async (
+  userPayload: JwtPayload,
+  payload: TPasswordUpdate,
+) => {
+  const user = await User.findOne({ id: userPayload.id })
 
   if (!user) {
     throw new AppError(StatusCodes.NOT_FOUND, 'User not found!')
@@ -117,8 +120,8 @@ const changePassword = async (id: string, payload: TPasswordUpdate) => {
   )
 
   const result = await User.findOneAndUpdate(
-    { id },
-    { password: hashedPass },
+    { id: userPayload.id },
+    { password: hashedPass, needsPasswordChange: false },
     { new: true },
   ).select('-password')
   if (!result) {

@@ -20,9 +20,10 @@ router.post(
 )
 router.post('/reset-password', authControllers.resetPassword)
 router.patch(
-  '/change-password/:id',
+  '/change-password',
   zodValidateHandler(authZodSchema.changePasswordZodSchema),
-  auth(USER_ROLE.FACULTY, USER_ROLE.STUDENT),
+  auth(USER_ROLE.ADMIN, USER_ROLE.FACULTY, USER_ROLE.STUDENT),
+  authControllers.changePassword,
 )
 
 export { router as authRouter }
