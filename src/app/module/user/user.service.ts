@@ -172,6 +172,7 @@ const insertFacultyToDb = async (payload: TFaculty & TUser) => {
     const userData: Partial<TUser> = {
       id,
       password: payload.password || '1234@@aA',
+      needsPasswordChange: true,
       role: 'faculty',
     }
     // Save user
