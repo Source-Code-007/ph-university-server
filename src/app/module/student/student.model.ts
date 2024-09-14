@@ -80,22 +80,27 @@ const StudentSchema = new Schema<TStudent>({
     enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
     required: true,
   },
+
+  isBloodDonor: { type: Boolean, default: false },
   isDeleted: { type: Boolean, required: true, default: false },
 })
 
 // Pre hook
-StudentSchema.pre('save', async function (next) {
-  try {
-    // Set admissionYear as the year of admissionDate
-    if (this.academicInfo?.admissionDate) {
-      this.academicInfo.admissionYear =
-        this.academicInfo?.admissionDate?.getFullYear()
+StudentSchema.pre(
+  'save',
+  async function (this: TStudent, next: (err?: any) => void) {
+    try {
+      // Set admissionYear as the year of admissionDate
+      if (this.academicInfo?.admissionDate) {
+        this.academicInfo.admissionYear =
+          this.academicInfo?.admissionDate?.getFullYear()
+      }
+      next()
+    } catch (e: any) {
+      next(e)
     }
-    next()
-  } catch (e: any) {
-    next(e)
-  }
-})
+  },
+)
 
 // Create the model
 const Student = model<TStudent>('student', StudentSchema)

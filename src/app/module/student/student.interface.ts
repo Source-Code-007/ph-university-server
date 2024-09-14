@@ -39,6 +39,7 @@ type TStudent = {
   permanentAddress: string
   guardian: TGuardian
   bloodGroup: TBloodGroup
+  isBloodDonor: boolean
   isDeleted: boolean
 }
 

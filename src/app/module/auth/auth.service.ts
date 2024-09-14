@@ -132,6 +132,7 @@ const forgetPassword = async (payload: Record<string, unknown>) => {
   })
   return { resetLink }
 }
+
 const resetPassword = async (payload: TResetPassword) => {
   const user = await User.findOne({ id: payload.id })
 

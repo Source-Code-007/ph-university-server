@@ -2,6 +2,8 @@ import { Student } from './student.model'
 import { TStudent } from './student.interface'
 import { studentSearchableFields } from './students.constant'
 import QueryBuilder from '../../builder/QueryBuilder'
+import AppError from '../../errors/appError'
+import { StatusCodes } from 'http-status-codes'
 
 const getAllStudent = async (query: Record<string, unknown>) => {
   // const queryObj = { ...query }
@@ -86,7 +88,7 @@ const getAllStudent = async (query: Record<string, unknown>) => {
 }
 
 const getStudentById = async (id: string) => {
-  const student = await Student.findById(id)
+  const student = await Student.findOne({ id })
     .select('-__v')
     .populate('user', '-createdAt -updatedAt -__v')
     .populate({
@@ -135,6 +137,28 @@ const updateStudentById = async (id: string, payload: Partial<TStudent>) => {
   return student
 }
 
+const toggleBloodDonor = async (id: string) => {
+  const student = await Student.findOne({ id })
+
+  if (!student) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'Student not found!')
+  }
+
+  const updatedStudent = await Student.findOneAndUpdate(
+    { id },
+    { isBloodDonor: !student?.isBloodDonor },
+    {
+      new: true,
+    },
+  )
+    .select('-__v')
+    .populate('user', '-createdAt -updatedAt -__v -department')
+    .populate('academicInfo.department')
+    .populate('academicInfo.batch')
+
+  return updatedStudent
+}
+
 const deleteStudentById = async (id: string) => {
   const student = await Student.findByIdAndUpdate(
     id,
@@ -148,5 +172,6 @@ export const studentServices = {
   getAllStudent,
   getStudentById,
   updateStudentById,
+  toggleBloodDonor,
   deleteStudentById,
 }

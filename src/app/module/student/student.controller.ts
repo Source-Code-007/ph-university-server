@@ -44,6 +44,21 @@ const updateStudentById: RequestHandler = catchAsync(async (req, res) => {
   })
 })
 
+const toggleBloodDonor: RequestHandler = catchAsync(async (req, res) => {
+  const student = await studentServices.toggleBloodDonor(req.params?.id)
+  if (!student) {
+    throw new AppError(StatusCodes.BAD_REQUEST, 'Student not updated!')
+  }
+  sendResponse(res, StatusCodes.OK, {
+    success: true,
+    message: student.isBloodDonor
+      ? `Thank you for registering as a blood donor! Your blood group is ${student.bloodGroup}.`
+      : `You have been removed from the blood donor registry.`,
+
+    data: student,
+  })
+})
+
 const deleteStudentById = catchAsync(async (req, res) => {
   const student = await studentServices.deleteStudentById(req.params.id)
   if (!student) {
@@ -60,5 +75,6 @@ export const studentController = {
   getAllStudent,
   getStudentById,
   updateStudentById,
+  toggleBloodDonor,
   deleteStudentById,
 }
