@@ -3,8 +3,9 @@ import { TUserRole } from '../module/user/user.interface'
 import catchAsync from '../utils/catchAsync'
 import AppError from '../errors/appError'
 import { StatusCodes } from 'http-status-codes'
-import jwt, { JwtPayload } from 'jsonwebtoken'
+import { JwtPayload } from 'jsonwebtoken'
 import User from '../module/user/user.model'
+import jwtVerify from '../utils/jwtVerify'
 
 const auth = (...requiredRoles: TUserRole[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
@@ -19,18 +20,21 @@ const auth = (...requiredRoles: TUserRole[]) => {
       throw new AppError(StatusCodes.UNAUTHORIZED, 'You are not authorized!')
     }
 
-    let decoded
-    try {
-      decoded = jwt.verify(
-        bearerToken,
-        process.env.JWT_ACCESS_SECRET as string,
-      ) as JwtPayload
-    } catch (e) {
-      throw new AppError(StatusCodes.UNAUTHORIZED, 'You are not authorized!')
-    }
+    // let decoded
+    // try {
+    //   decoded = jwt.verify(
+    //     bearerToken,
+    //     process.env.JWT_ACCESS_SECRET as string,
+    //   ) as JwtPayload
+    // } catch (e) {
+    //   throw new AppError(StatusCodes.UNAUTHORIZED, 'You are not authorized!')
+    // }
+    const decoded = (await jwtVerify(
+      bearerToken,
+      process.env.JWT_ACCESS_SECRET as string,
+    )) as JwtPayload
 
     const { id, role } = decoded
-
 
     const user = await User.findOne({ id })
 

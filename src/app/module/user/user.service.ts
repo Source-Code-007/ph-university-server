@@ -11,6 +11,8 @@ import { TFaculty } from '../faculty/faculty.interface'
 import { Faculty } from '../faculty/faculty.model'
 import { TAdmin } from '../admin/admin.interface'
 import { Admin } from '../admin/admin.model'
+import { JwtPayload } from 'jsonwebtoken'
+import jwtVerify from '../../utils/jwtVerify'
 
 const insertStudentToDb = async (payload: TStudent & TUser) => {
   const session = await mongoose.startSession()
@@ -288,10 +290,35 @@ const getSingleUserById = async (id: string) => {
   return user
 }
 
+const getMe = async (token: string) => {
+  const bearerToken = token.split(' ')?.[1]
+  if (!bearerToken) {
+    throw new AppError(StatusCodes.UNAUTHORIZED, 'You are not authorized!')
+  }
+  const decoded = (await jwtVerify(
+    bearerToken,
+    process.env.JWT_ACCESS_SECRET as string,
+  )) as JwtPayload
+
+  let result
+  if (decoded.role === 'student') {
+    result = await Student.findOne({ id: decoded.id }).select('-__v')
+  }
+  if (decoded.role === 'faculty') {
+    result = await Faculty.findOne({ id: decoded.id }).select('-__v')
+  }
+  if (decoded.role === 'admin') {
+    result = await Admin.findOne({ id: decoded.id }).select('-__v')
+  }
+
+  return result
+}
+
 export const userServices = {
   insertStudentToDb,
   insertFacultyToDb,
   insertAdminToDb,
   getAllUser,
   getSingleUserById,
+  getMe,
 }

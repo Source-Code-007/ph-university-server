@@ -26,7 +26,6 @@ const insertFaculty: RequestHandler = catchAsync(async (req, res) => {
   })
 })
 const insertAdmin: RequestHandler = catchAsync(async (req, res) => {
-
   const admin = await userServices.insertAdminToDb(req.body)
   sendResponse(res, StatusCodes.OK, {
     success: true,
@@ -35,28 +34,43 @@ const insertAdmin: RequestHandler = catchAsync(async (req, res) => {
   })
 })
 
-const getAllUsers: RequestHandler = catchAsync(async(req, res)=> {
+const getAllUsers: RequestHandler = catchAsync(async (req, res) => {
   const users = await userServices.getAllUser()
-    sendResponse(res, StatusCodes.OK, {
-      success: true,
-      message: 'Users are retrieved successfully!',
-      data: users,
-    })
+  sendResponse(res, StatusCodes.OK, {
+    success: true,
+    message: 'Users are retrieved successfully!',
+    data: users,
+  })
 })
 
-
-const getUserById: RequestHandler = catchAsync(async (req, res)=> {
+const getUserById: RequestHandler = catchAsync(async (req, res) => {
   const user = await userServices.getSingleUserById(req.params?.id)
-    if (!user) {
-      throw new AppError(StatusCodes.NOT_FOUND, 'User not found!')
-    }
-    sendResponse(res, StatusCodes.OK, {
-      success: true,
-      message: 'User is retrieved successfully!',
-      data: user,
-    })
+  if (!user) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'User not found!')
+  }
+  sendResponse(res, StatusCodes.OK, {
+    success: true,
+    message: 'User is retrieved successfully!',
+    data: user,
+  })
 })
 
+const getMe: RequestHandler = catchAsync(async (req, res) => {
+  const token = req.headers?.authorization as string
+  if (!token) {
+    throw new AppError(StatusCodes.BAD_REQUEST, 'Token is required!')
+  }
+
+  const user = await userServices.getMe(req.headers?.authorization as string)
+  if (!user) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'User not found!')
+  }
+  sendResponse(res, StatusCodes.OK, {
+    success: true,
+    message: 'My data is retrieved successfully!',
+    data: user,
+  })
+})
 
 export const userController = {
   insertStudent,
@@ -64,4 +78,5 @@ export const userController = {
   insertAdmin,
   getAllUsers,
   getUserById,
+  getMe,
 }

@@ -9,6 +9,7 @@ import { createAdminZodSchema } from '../admin/admin.validate'
 import auth from '../../middleware/auth'
 import { USER_ROLE } from './user.constant'
 
+
 const router = Router()
 
 router.post(
@@ -27,6 +28,13 @@ router.post(
   zodValidateHandler(createAdminZodSchema),
   userController.insertAdmin,
 )
+
+router.get(
+  '/me',
+  auth(USER_ROLE.ADMIN, USER_ROLE.FACULTY, USER_ROLE.STUDENT),
+  userController.getMe,
+)
+// Not secured for blood donor (TODO: Only admin and faculty should be access)
 router.get('/', userController.getAllUsers)
 router.get('/:id', userController.getUserById)
 

@@ -133,11 +133,21 @@ const forgetPassword = async (payload: Record<string, unknown>) => {
   return { resetLink }
 }
 
-const resetPassword = async (payload: TResetPassword) => {
+const resetPassword = async (
+  payload: TResetPassword,
+  jwtPayload: JwtPayload,
+) => {
   const user = await User.findOne({ id: payload.id })
 
   if (!user) {
     throw new AppError(StatusCodes.NOT_FOUND, 'User not found!')
+  }
+
+  if (jwtPayload.id != user.id) {
+    throw new AppError(
+      StatusCodes.FORBIDDEN,
+      'You are not authorized to reset password for this user',
+    )
   }
 
   const hashedPass = await bcrypt.hash(
