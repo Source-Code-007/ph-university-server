@@ -5,9 +5,12 @@ import { StatusCodes } from 'http-status-codes'
 import catchAsync from '../../utils/catchAsync'
 import AppError from '../../errors/appError'
 import { userServices } from './user.service'
+import { JwtPayload } from 'jsonwebtoken'
 
 const insertStudent: RequestHandler = catchAsync(async (req, res) => {
-  const student = await userServices.insertStudentToDb(req.body)
+
+
+  const student = await userServices.insertStudentToDb(req.file, req.body)
 
   sendResponse(res, StatusCodes.OK, {
     success: true,
@@ -56,18 +59,13 @@ const getUserById: RequestHandler = catchAsync(async (req, res) => {
 })
 
 const getMe: RequestHandler = catchAsync(async (req, res) => {
-  const token = req.headers?.authorization as string
-  if (!token) {
-    throw new AppError(StatusCodes.BAD_REQUEST, 'Token is required!')
-  }
-
-  const user = await userServices.getMe(req.headers?.authorization as string)
+  const user = await userServices.getMe(req.user as JwtPayload)
   if (!user) {
     throw new AppError(StatusCodes.NOT_FOUND, 'User not found!')
   }
   sendResponse(res, StatusCodes.OK, {
     success: true,
-    message: 'My data is retrieved successfully!',
+    message: 'User is retrieved successfully!',
     data: user,
   })
 })

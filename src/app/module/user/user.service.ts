@@ -12,9 +12,9 @@ import { Faculty } from '../faculty/faculty.model'
 import { TAdmin } from '../admin/admin.interface'
 import { Admin } from '../admin/admin.model'
 import { JwtPayload } from 'jsonwebtoken'
-import jwtVerify from '../../utils/jwtVerify'
+import { uploadImgToCloudinary } from '../../utils/uploadImgToCloudinary'
 
-const insertStudentToDb = async (payload: TStudent & TUser) => {
+const insertStudentToDb = async (file: any, payload: TStudent & TUser) => {
   const session = await mongoose.startSession()
 
   try {
@@ -74,6 +74,16 @@ const insertStudentToDb = async (payload: TStudent & TUser) => {
     payload.academicInfo.regSlNo = regSlNo
     payload.academicInfo.regCode = regCode
     payload.id = regCode
+
+    // file upload
+    const cloudinaryRes = await uploadImgToCloudinary(
+      `${regCode}-${payload.name.firstName}-${payload.name.lastName}`,
+      file.path,
+    )
+
+    if (cloudinaryRes) {
+      payload.profileImg = cloudinaryRes.secure_url
+    }
 
     // Check if batch has reached the maximum student limit
     const maxStudentsPerBatch = Number(process.env.MAX_STUDENT_PER_BATCH) || 45 // Default to 45 if not set
@@ -290,25 +300,16 @@ const getSingleUserById = async (id: string) => {
   return user
 }
 
-const getMe = async (token: string) => {
-  const bearerToken = token.split(' ')?.[1]
-  if (!bearerToken) {
-    throw new AppError(StatusCodes.UNAUTHORIZED, 'You are not authorized!')
-  }
-  const decoded = (await jwtVerify(
-    bearerToken,
-    process.env.JWT_ACCESS_SECRET as string,
-  )) as JwtPayload
-
+const getMe = async (payload: JwtPayload) => {
   let result
-  if (decoded.role === 'student') {
-    result = await Student.findOne({ id: decoded.id }).select('-__v')
+  if (payload.role === 'student') {
+    result = await Student.findOne({ id: payload.id }).select('-__v')
   }
-  if (decoded.role === 'faculty') {
-    result = await Faculty.findOne({ id: decoded.id }).select('-__v')
+  if (payload.role === 'faculty') {
+    result = await Faculty.findOne({ id: payload.id }).select('-__v')
   }
-  if (decoded.role === 'admin') {
-    result = await Admin.findOne({ id: decoded.id }).select('-__v')
+  if (payload.role === 'admin') {
+    result = await Admin.findOne({ id: payload.id }).select('-__v')
   }
 
   return result

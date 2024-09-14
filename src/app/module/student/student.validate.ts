@@ -7,7 +7,7 @@ const createStudentZodSchema = z.object({
     lastName: z.string(),
   }),
 
-  profileImg: z.string().optional(),
+  // profileImg: z.string().optional(),
   gender: z.enum(['male', 'female', 'other']),
   dateOfBirth: z.string(),
   email: z.string(),
@@ -37,7 +37,7 @@ const updateStudentZodSchema = z.object({
       lastName: z.string().optional(),
     })
     .optional(),
-  profileImg: z.string().optional(),
+  // profileImg: z.string().optional(),
   gender: z.enum(['male', 'female', 'other']).optional(),
   dateOfBirth: z.string().optional(),
   email: z.string().optional(),

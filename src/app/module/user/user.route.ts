@@ -1,4 +1,4 @@
-import { Router } from 'express'
+import { NextFunction, Request, Response, Router } from 'express'
 
 import zodValidateHandler from '../../middleware/zodValidateHandler'
 
@@ -8,13 +8,18 @@ import { createFacultyZodSchema } from '../faculty/faculty.validate.ts'
 import { createAdminZodSchema } from '../admin/admin.validate'
 import auth from '../../middleware/auth'
 import { USER_ROLE } from './user.constant'
-
+import { upload } from '../../utils/uploadImgToCloudinary'
 
 const router = Router()
 
 router.post(
   '/create-student',
   auth(USER_ROLE.ADMIN),
+  upload.single('file'),
+  (req: Request, res: Response, next: NextFunction) => {
+    req.body = JSON.parse(req.body?.data)
+    next()
+  },
   zodValidateHandler(createStudentZodSchema),
   userController.insertStudent,
 )
