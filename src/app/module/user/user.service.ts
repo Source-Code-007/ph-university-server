@@ -80,7 +80,6 @@ const insertStudentToDb = async (file: any, payload: TStudent & TUser) => {
       `${regCode}-${payload.name.firstName}-${payload.name.lastName}`,
       file.path,
     )
-
     if (cloudinaryRes) {
       payload.profileImg = cloudinaryRes.secure_url
     }
